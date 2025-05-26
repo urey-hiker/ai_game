@@ -256,6 +256,12 @@ function updateDifficultyButtons() {
 
 // 显示指定屏幕
 function showScreen(screenName) {
+    // 停止任何可能正在运行的计时器
+    if (gameState.timerInterval) {
+        clearInterval(gameState.timerInterval);
+        gameState.timerInterval = null;
+    }
+    
     // 隐藏所有屏幕
     Object.values(elements.screens).forEach(screen => {
         screen.classList.remove('active');
@@ -714,7 +720,10 @@ function updateGameUI() {
 // 结束游戏
 function endGame() {
     // 停止计时器
-    clearInterval(gameState.timerInterval);
+    if (gameState.timerInterval) {
+        clearInterval(gameState.timerInterval);
+        gameState.timerInterval = null;
+    }
     
     // 播放游戏结束音效
     elements.sounds.win.play();
