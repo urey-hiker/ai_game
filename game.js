@@ -201,15 +201,15 @@ function setupEventListeners() {
     // 返回按钮
     elements.buttons.backFromRules.addEventListener('click', () => {
         elements.sounds.click.play();
-        showScreen('main-menu');
+        showScreen('mainMenu');
     });
     elements.buttons.backFromAchievements.addEventListener('click', () => {
         elements.sounds.click.play();
-        showScreen('main-menu');
+        showScreen('mainMenu');
     });
     elements.buttons.backFromDifficulty.addEventListener('click', () => {
         elements.sounds.click.play();
-        showScreen('main-menu');
+        showScreen('mainMenu');
     });
     
     // 难度选择按钮
@@ -240,7 +240,7 @@ function setupEventListeners() {
     });
     elements.buttons.backToMenu.addEventListener('click', () => {
         elements.sounds.click.play();
-        showScreen('main-menu');
+        showScreen('mainMenu');
     });
     elements.buttons.shareResult.addEventListener('click', () => {
         elements.sounds.click.play();
