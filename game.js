@@ -9,21 +9,21 @@ const gameConfig = {
             colors: ['red', 'yellow'],
             texts: ['红', '黄'],
             optionsCount: 3,
-            timeLimit: 5,
+            timeLimit: 10,
             targetScore: 100
         },
         medium: {
             colors: ['red', 'yellow', 'blue', 'green'],
             texts: ['红', '黄', '蓝', '绿'],
             optionsCount: 5,
-            timeLimit: 3,
+            timeLimit: 8,
             targetScore: 200
         },
         hard: {
             colors: ['red', 'yellow', 'blue', 'green', 'purple', 'pink'],
             texts: ['红', '黄', '蓝', '绿', '紫', '粉', '彩虹'], // 彩虹是干扰项
             optionsCount: 5,
-            timeLimit: 2,
+            timeLimit: 5,
             targetScore: 300
         }
     },
