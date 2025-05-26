@@ -6,9 +6,9 @@ const gameConfig = {
     // 难度设置
     difficulties: {
         easy: {
-            colors: ['red', 'yellow'],
-            texts: ['红', '黄'],
-            optionsCount: 6,
+            colors: ['red', 'yellow', 'blue'],
+            texts: ['红', '黄', '蓝'],
+            optionsCount: 4,
             timeLimit: 20,
             targetScore: 100
         },
@@ -97,7 +97,9 @@ const elements = {
         promptContainer: document.getElementById('prompt-container'),
         optionsContainer: document.getElementById('options-container'),
         countdown: document.getElementById('countdown'),
-        countdownNumber: document.querySelector('.countdown-number')
+        countdownNumber: document.querySelector('.countdown-number'),
+        comboIndicator: document.getElementById('combo-indicator'),
+        comboNumber: document.querySelector('.combo-number')
     },
     result: {
         finalScore: document.getElementById('final-score'),
@@ -290,6 +292,10 @@ function startGame() {
     // 更新UI
     updateGameUI();
     
+    // 重置连击指示器
+    elements.game.comboIndicator.classList.remove('active');
+    elements.game.comboIndicator.classList.remove('milestone');
+    
     // 显示游戏屏幕
     showScreen('game');
     
@@ -338,12 +344,9 @@ function startRound() {
 
 // 生成基础难度的一轮游戏
 function generateEasyModeRound(difficultySettings) {
-    // 1. 随机选择一个颜色和一个不同的文字
+    // 1. 随机选择一个颜色和文字
     const colorIndex = Math.floor(Math.random() * difficultySettings.colors.length);
-    let textIndex;
-    do {
-        textIndex = Math.floor(Math.random() * difficultySettings.texts.length);
-    } while (gameConfig.textMap[difficultySettings.texts[textIndex]] === difficultySettings.colors[colorIndex]);
+    const textIndex = Math.floor(Math.random() * difficultySettings.texts.length);
     
     const targetColor = difficultySettings.colors[colorIndex];
     const targetText = difficultySettings.texts[textIndex];
@@ -360,8 +363,6 @@ function generateEasyModeRound(difficultySettings) {
     const wrongOptions = [];
     for (let i = 0; i < difficultySettings.optionsCount - 1; i++) {
         let wrongColor, wrongText;
-        
-        // 确保错误选项与正确选项不同
         do {
             // 生成颜色相同但文字不同的选项，或文字相同但颜色不同的选项
             if (Math.random() < 0.5) {
@@ -375,10 +376,8 @@ function generateEasyModeRound(difficultySettings) {
                 } while (wrongColor === targetColor);
                 wrongText = targetText;
             }
-            
-            // 确保这个错误选项不符合"颜色≠文字"的正确条件
-        } while (wrongColor !== gameConfig.textMap[wrongText]);
-        
+            // 只需保证和正确选项不同即可
+        } while (wrongColor === targetColor && wrongText === targetText);
         wrongOptions.push(createOptionButton(wrongColor, wrongText, false));
     }
     
@@ -715,6 +714,35 @@ function updateGameUI() {
     elements.game.combo.textContent = gameState.combo;
     elements.game.time.textContent = Math.max(0, Math.floor(gameState.time * 10) / 10).toFixed(1);
     elements.game.level.textContent = gameState.level;
+    
+    // 更新连击指示器
+    updateComboIndicator();
+}
+
+// 更新连击指示器
+function updateComboIndicator() {
+    // 更新连击数字
+    elements.game.comboNumber.textContent = gameState.combo;
+    
+    // 显示/隐藏连击指示器
+    if (gameState.combo > 0) {
+        elements.game.comboIndicator.classList.add('active');
+    } else {
+        elements.game.comboIndicator.classList.remove('active');
+        elements.game.comboIndicator.classList.remove('milestone');
+    }
+    
+    // 检查是否达到连击里程碑
+    const comboMilestones = Object.keys(gameConfig.comboRewards).map(Number);
+    const isAtMilestone = comboMilestones.some(milestone => 
+        gameState.combo > 0 && gameState.combo % milestone === 0
+    );
+    
+    if (isAtMilestone) {
+        elements.game.comboIndicator.classList.add('milestone');
+    } else {
+        elements.game.comboIndicator.classList.remove('milestone');
+    }
 }
 
 // 结束游戏
