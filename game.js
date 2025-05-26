@@ -419,6 +419,15 @@ function handleCorrectAnswer(button) {
     // 播放正确音效
     elements.sounds.correct.play();
     
+    // 显示正确提示
+    showFeedbackMessage('正确！', 'correct');
+    
+    // 高亮显示正确选项
+    button.classList.add('correct');
+    setTimeout(() => {
+        button.classList.remove('correct');
+    }, 800);
+    
     // 增加分数
     const baseScore = 10;
     let scoreToAdd = gameState.doubleScoreActive ? baseScore * 2 : baseScore;
@@ -455,6 +464,15 @@ function handleWrongAnswer(button) {
     // 播放错误音效
     elements.sounds.wrong.play();
     
+    // 显示错误提示
+    showFeedbackMessage('错误！', 'wrong');
+    
+    // 高亮显示错误选项
+    button.classList.add('wrong');
+    setTimeout(() => {
+        button.classList.remove('wrong');
+    }, 800);
+    
     // 添加抖动效果
     button.classList.add('shake');
     setTimeout(() => {
@@ -472,6 +490,20 @@ function handleWrongAnswer(button) {
     
     // 更新UI
     updateGameUI();
+}
+
+// 显示反馈信息
+function showFeedbackMessage(message, type) {
+    const feedbackMessage = document.createElement('div');
+    feedbackMessage.className = `feedback-message feedback-${type}`;
+    feedbackMessage.textContent = message;
+    
+    elements.screens.game.appendChild(feedbackMessage);
+    
+    // 延迟移除元素
+    setTimeout(() => {
+        feedbackMessage.remove();
+    }, 1000);
 }
 
 // 显示连击效果
