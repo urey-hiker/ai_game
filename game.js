@@ -58,7 +58,8 @@ const gameState = {
     doubleScoreActive: false,
     immunityActive: false,
     unlockedAchievements: [],
-    unlockedDifficulties: ['easy']
+    unlockedDifficulties: ['easy'],
+    currentCorrectOption: null // 用于基础难度下保存当前正确选项
 };
 
 // DOM元素引用
@@ -92,6 +93,7 @@ const elements = {
         combo: document.getElementById('combo'),
         time: document.getElementById('time'),
         level: document.getElementById('level'),
+        promptContainer: document.getElementById('prompt-container'),
         optionsContainer: document.getElementById('options-container'),
         countdown: document.getElementById('countdown'),
         countdownNumber: document.querySelector('.countdown-number')
@@ -236,40 +238,101 @@ function startCountdown() {
 
 // 开始一轮游戏
 function startRound() {
-    // 清空选项容器
+    // 清空选项容器和提示容器
     elements.game.optionsContainer.innerHTML = '';
+    elements.game.promptContainer.innerHTML = '';
     
     // 获取当前难度设置
     const difficultySettings = gameConfig.difficulties[gameState.difficulty];
     
-    // 生成选项
-    for (let i = 0; i < difficultySettings.optionsCount; i++) {
-        const option = generateOption(difficultySettings);
-        elements.game.optionsContainer.appendChild(option);
+    if (gameState.difficulty === 'easy') {
+        // 基础难度：生成提示词和一个正确选项，其余为错误选项
+        generateEasyModeRound(difficultySettings);
+    } else {
+        // 中级和高级难度：随机生成选项
+        generateNormalModeRound(difficultySettings);
     }
     
     // 开始计时器
     startTimer();
 }
 
-// 生成选项按钮
-function generateOption(difficultySettings) {
-    let color, text;
-    const isDistractor = Math.random() < 0.1 && difficultySettings.texts.includes('彩虹');
+// 生成基础难度的一轮游戏
+function generateEasyModeRound(difficultySettings) {
+    // 1. 随机选择一个颜色和一个不同的文字
+    const colorIndex = Math.floor(Math.random() * difficultySettings.colors.length);
+    let textIndex;
+    do {
+        textIndex = Math.floor(Math.random() * difficultySettings.texts.length);
+    } while (gameConfig.textMap[difficultySettings.texts[textIndex]] === difficultySettings.colors[colorIndex]);
     
-    if (isDistractor) {
-        // 生成干扰项
-        color = difficultySettings.colors[Math.floor(Math.random() * difficultySettings.colors.length)];
-        text = '彩虹';
-    } else {
-        // 生成正常选项
+    const targetColor = difficultySettings.colors[colorIndex];
+    const targetText = difficultySettings.texts[textIndex];
+    
+    // 2. 创建提示词
+    const prompt = document.createElement('div');
+    prompt.textContent = `请点击${getColorName(targetColor)}的"${targetText}"字`;
+    elements.game.promptContainer.appendChild(prompt);
+    
+    // 3. 创建正确选项
+    const correctOption = createOptionButton(targetColor, targetText, false);
+    
+    // 4. 创建错误选项
+    const wrongOptions = [];
+    for (let i = 0; i < difficultySettings.optionsCount - 1; i++) {
+        let wrongColor, wrongText;
+        
+        // 确保错误选项与正确选项不同
         do {
-            color = difficultySettings.colors[Math.floor(Math.random() * difficultySettings.colors.length)];
-            text = difficultySettings.texts[Math.floor(Math.random() * (difficultySettings.texts.length - (difficultySettings.texts.includes('彩虹') ? 1 : 0)))];
-        } while (color === gameConfig.textMap[text]); // 确保颜色≠文字对应值
+            // 生成颜色相同但文字不同的选项，或文字相同但颜色不同的选项
+            if (Math.random() < 0.5) {
+                wrongColor = targetColor;
+                do {
+                    wrongText = difficultySettings.texts[Math.floor(Math.random() * difficultySettings.texts.length)];
+                } while (wrongText === targetText);
+            } else {
+                do {
+                    wrongColor = difficultySettings.colors[Math.floor(Math.random() * difficultySettings.colors.length)];
+                } while (wrongColor === targetColor);
+                wrongText = targetText;
+            }
+            
+            // 确保这个错误选项不符合"颜色≠文字"的正确条件
+        } while (wrongColor !== gameConfig.textMap[wrongText]);
+        
+        wrongOptions.push(createOptionButton(wrongColor, wrongText, false));
     }
     
-    // 创建按钮元素
+    // 5. 随机排列所有选项
+    const allOptions = [correctOption, ...wrongOptions];
+    shuffleArray(allOptions);
+    
+    // 6. 添加到容器
+    allOptions.forEach(option => {
+        elements.game.optionsContainer.appendChild(option);
+    });
+    
+    // 保存当前正确选项信息，用于判断
+    gameState.currentCorrectOption = {
+        color: targetColor,
+        text: targetText
+    };
+}
+
+// 生成普通模式的一轮游戏（中级和高级难度）
+function generateNormalModeRound(difficultySettings) {
+    // 清空选项容器
+    elements.game.optionsContainer.innerHTML = '';
+    
+    // 生成选项
+    for (let i = 0; i < difficultySettings.optionsCount; i++) {
+        const option = generateOption(difficultySettings);
+        elements.game.optionsContainer.appendChild(option);
+    }
+}
+
+// 创建选项按钮
+function createOptionButton(color, text, isDistractor) {
     const button = document.createElement('button');
     button.className = 'option-btn';
     button.style.color = color;
@@ -277,14 +340,40 @@ function generateOption(difficultySettings) {
     
     // 添加点击事件
     button.addEventListener('click', () => {
-        handleOptionClick(button, isDistractor);
+        if (gameState.difficulty === 'easy') {
+            handleEasyModeClick(button);
+        } else {
+            handleNormalModeClick(button, isDistractor);
+        }
     });
     
     return button;
 }
 
-// 处理选项点击
-function handleOptionClick(button, isDistractor) {
+// 处理基础难度的点击
+function handleEasyModeClick(button) {
+    const targetColor = button.style.color;
+    const targetText = button.textContent;
+    
+    // 检查是否是正确选项
+    if (targetColor === gameState.currentCorrectOption.color && 
+        targetText === gameState.currentCorrectOption.text) {
+        // 正确
+        handleCorrectAnswer(button);
+    } else {
+        // 错误
+        handleWrongAnswer(button);
+    }
+    
+    // 检查是否需要进入下一关
+    checkLevelProgress();
+    
+    // 开始新一轮
+    startRound();
+}
+
+// 处理普通模式的点击
+function handleNormalModeClick(button, isDistractor) {
     const targetColor = button.style.color;
     const targetText = button.textContent;
     
@@ -301,6 +390,28 @@ function handleOptionClick(button, isDistractor) {
     
     // 开始新一轮
     startRound();
+}
+
+// 获取颜色名称
+function getColorName(color) {
+    const colorNames = {
+        'red': '红色',
+        'yellow': '黄色',
+        'blue': '蓝色',
+        'green': '绿色',
+        'purple': '紫色',
+        'pink': '粉色'
+    };
+    return colorNames[color] || color;
+}
+
+// 打乱数组顺序
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
 }
 
 // 处理正确答案
