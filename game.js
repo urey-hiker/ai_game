@@ -9,21 +9,21 @@ const gameConfig = {
             colors: ['red', 'yellow'],
             texts: ['红', '黄'],
             optionsCount: 3,
-            timeLimit: 10,
+            timeLimit: 20,
             targetScore: 100
         },
         medium: {
             colors: ['red', 'yellow', 'blue', 'green'],
             texts: ['红', '黄', '蓝', '绿'],
             optionsCount: 5,
-            timeLimit: 8,
+            timeLimit: 20,
             targetScore: 200
         },
         hard: {
             colors: ['red', 'yellow', 'blue', 'green', 'purple', 'pink'],
             texts: ['红', '黄', '蓝', '绿', '紫', '粉', '彩虹'], // 彩虹是干扰项
             optionsCount: 5,
-            timeLimit: 5,
+            timeLimit: 20,
             targetScore: 300
         }
     },
@@ -108,7 +108,8 @@ const elements = {
         correct: document.getElementById('correct-sound'),
         wrong: document.getElementById('wrong-sound'),
         combo: document.getElementById('combo-sound'),
-        levelUp: document.getElementById('level-up-sound')
+        levelUp: document.getElementById('level-up-sound'),
+        win: document.getElementById('win-sound')
     }
 };
 
@@ -632,6 +633,9 @@ function updateGameUI() {
 function endGame() {
     // 停止计时器
     clearInterval(gameState.timerInterval);
+    
+    // 播放游戏结束音效
+    elements.sounds.win.play();
     
     // 检查是否解锁新难度
     checkDifficultyUnlock();
