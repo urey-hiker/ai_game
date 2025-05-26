@@ -113,7 +113,8 @@ const elements = {
         wrong: document.getElementById('wrong-sound'),
         combo: document.getElementById('combo-sound'),
         levelUp: document.getElementById('level-up-sound'),
-        win: document.getElementById('win-sound')
+        win: document.getElementById('win-sound'),
+        bgm: document.getElementById('bgm-sound')
     }
 };
 
@@ -264,6 +265,11 @@ function showScreen(screenName) {
         gameState.timerInterval = null;
     }
     
+    // 如果从游戏屏幕切换到其他屏幕，停止背景音乐
+    if (gameState.currentScreen === 'game' && screenName !== 'game') {
+        stopBackgroundMusic();
+    }
+    
     // 隐藏所有屏幕
     Object.values(elements.screens).forEach(screen => {
         screen.classList.remove('active');
@@ -296,11 +302,32 @@ function startGame() {
     elements.game.comboIndicator.classList.remove('active');
     elements.game.comboIndicator.classList.remove('milestone');
     
+    // 播放背景音乐
+    playBackgroundMusic();
+    
     // 显示游戏屏幕
     showScreen('game');
     
     // 开始倒计时
     startCountdown();
+}
+
+// 播放背景音乐
+function playBackgroundMusic() {
+    // 重置音乐到开头
+    elements.sounds.bgm.currentTime = 0;
+    // 设置音量
+    elements.sounds.bgm.volume = 0.5;
+    // 播放音乐
+    elements.sounds.bgm.play().catch(error => {
+        console.log('背景音乐播放失败:', error);
+    });
+}
+
+// 停止背景音乐
+function stopBackgroundMusic() {
+    elements.sounds.bgm.pause();
+    elements.sounds.bgm.currentTime = 0;
 }
 
 // 开始倒计时
@@ -752,6 +779,9 @@ function endGame() {
         clearInterval(gameState.timerInterval);
         gameState.timerInterval = null;
     }
+    
+    // 停止背景音乐
+    stopBackgroundMusic();
     
     // 播放游戏结束音效
     elements.sounds.win.play();
