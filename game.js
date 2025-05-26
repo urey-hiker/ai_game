@@ -601,7 +601,7 @@ function handleWrongAnswer(button) {
     gameState.consecutiveErrors++;
     
     // 减少时间
-    gameState.time = Math.max(1, gameState.time - 1);
+    gameState.time = Math.max(0, gameState.time - 1);
     
     // 更新UI
     updateGameUI();
@@ -843,10 +843,22 @@ function showUnlockNotification(message) {
 
 // 更新结果界面
 function updateResultScreen() {
+    // 更新结果数据
     elements.result.finalScore.textContent = gameState.score;
     elements.result.maxCombo.textContent = gameState.maxCombo;
     elements.result.clearedLevels.textContent = gameState.clearedLevels;
     elements.result.unlockedContainer.innerHTML = '';
+    
+    // 获取结果按钮容器
+    const resultButtons = document.querySelector('.result-buttons');
+    
+    // 先隐藏按钮
+    resultButtons.classList.remove('show');
+    
+    // 1秒后显示按钮
+    setTimeout(() => {
+        resultButtons.classList.add('show');
+    }, 1000);
 }
 
 // 渲染成就列表
