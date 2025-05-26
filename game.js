@@ -105,6 +105,7 @@ const elements = {
         unlockedContainer: document.getElementById('unlocked-container')
     },
     sounds: {
+        click: document.getElementById('click-sound'),
         correct: document.getElementById('correct-sound'),
         wrong: document.getElementById('wrong-sound'),
         combo: document.getElementById('combo-sound'),
@@ -147,33 +148,67 @@ function saveGameData() {
 // 设置事件监听器
 function setupEventListeners() {
     // 主菜单按钮
-    elements.buttons.startGame.addEventListener('click', () => showScreen('difficulty'));
-    elements.buttons.showRules.addEventListener('click', () => showScreen('rules'));
-    elements.buttons.showAchievements.addEventListener('click', () => showScreen('achievements'));
+    elements.buttons.startGame.addEventListener('click', () => {
+        elements.sounds.click.play();
+        showScreen('difficulty');
+    });
+    elements.buttons.showRules.addEventListener('click', () => {
+        elements.sounds.click.play();
+        showScreen('rules');
+    });
+    elements.buttons.showAchievements.addEventListener('click', () => {
+        elements.sounds.click.play();
+        showScreen('achievements');
+    });
     
     // 返回按钮
-    elements.buttons.backFromRules.addEventListener('click', () => showScreen('main-menu'));
-    elements.buttons.backFromAchievements.addEventListener('click', () => showScreen('main-menu'));
-    elements.buttons.backFromDifficulty.addEventListener('click', () => showScreen('main-menu'));
+    elements.buttons.backFromRules.addEventListener('click', () => {
+        elements.sounds.click.play();
+        showScreen('main-menu');
+    });
+    elements.buttons.backFromAchievements.addEventListener('click', () => {
+        elements.sounds.click.play();
+        showScreen('main-menu');
+    });
+    elements.buttons.backFromDifficulty.addEventListener('click', () => {
+        elements.sounds.click.play();
+        showScreen('main-menu');
+    });
     
     // 难度选择按钮
     elements.buttons.difficultyOptions.easy.addEventListener('click', () => {
+        elements.sounds.click.play();
         gameState.difficulty = 'easy';
         startGame();
     });
     elements.buttons.difficultyOptions.medium.addEventListener('click', () => {
-        gameState.difficulty = 'medium';
-        startGame();
+        if (!elements.buttons.difficultyOptions.medium.disabled) {
+            elements.sounds.click.play();
+            gameState.difficulty = 'medium';
+            startGame();
+        }
     });
     elements.buttons.difficultyOptions.hard.addEventListener('click', () => {
-        gameState.difficulty = 'hard';
-        startGame();
+        if (!elements.buttons.difficultyOptions.hard.disabled) {
+            elements.sounds.click.play();
+            gameState.difficulty = 'hard';
+            startGame();
+        }
     });
     
     // 结果界面按钮
-    elements.buttons.playAgain.addEventListener('click', () => showScreen('difficulty'));
-    elements.buttons.backToMenu.addEventListener('click', () => showScreen('main-menu'));
-    elements.buttons.shareResult.addEventListener('click', shareResult);
+    elements.buttons.playAgain.addEventListener('click', () => {
+        elements.sounds.click.play();
+        showScreen('difficulty');
+    });
+    elements.buttons.backToMenu.addEventListener('click', () => {
+        elements.sounds.click.play();
+        showScreen('main-menu');
+    });
+    elements.buttons.shareResult.addEventListener('click', () => {
+        elements.sounds.click.play();
+        shareResult();
+    });
 }
 
 // 更新难度按钮状态
