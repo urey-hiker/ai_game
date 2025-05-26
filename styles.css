@@ -584,3 +584,25 @@ body {
 .option-btn[style*="color: pink"] {
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
 }
+.result-stats {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 15px 25px;
+    margin: 20px 0;
+    box-shadow: var(--shadow);
+    text-align: left;
+    max-width: 90%;
+    width: 350px;
+}
+
+.result-stats p {
+    margin: 8px 0;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.result-stats span {
+    font-weight: bold;
+    color: var(--accent-color);
+}

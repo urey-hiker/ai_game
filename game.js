@@ -60,7 +60,11 @@ const gameState = {
     unlockedAchievements: [],
     unlockedDifficulties: ['easy'],
     currentCorrectOption: null, // 用于基础难度下保存当前正确选项
-    debugMode: false // 调试模式开关
+    debugMode: false, // 调试模式开关
+    totalClicks: 0, // 总点击次数
+    correctClicks: 0, // 正确点击次数
+    clickTimes: [], // 记录每次正确点击的时间
+    lastClickTime: 0 // 上次点击的时间戳
 };
 
 // DOM元素引用
@@ -105,6 +109,9 @@ const elements = {
         finalScore: document.getElementById('final-score'),
         maxCombo: document.getElementById('max-combo'),
         clearedLevels: document.getElementById('cleared-levels'),
+        accuracy: document.getElementById('accuracy'),
+        fastestTime: document.getElementById('fastest-time'),
+        averageTime: document.getElementById('average-time'),
         unlockedContainer: document.getElementById('unlocked-container')
     },
     sounds: {
@@ -291,6 +298,12 @@ function startGame() {
     gameState.doubleScoreActive = false;
     gameState.immunityActive = false;
     
+    // 重置统计数据
+    gameState.totalClicks = 0;
+    gameState.correctClicks = 0;
+    gameState.clickTimes = [];
+    gameState.lastClickTime = 0;
+    
     // 设置初始时间
     const difficultySettings = gameConfig.difficulties[gameState.difficulty];
     gameState.time = difficultySettings.timeLimit;
@@ -353,6 +366,9 @@ function startRound() {
     // 清空选项容器和提示容器
     elements.game.optionsContainer.innerHTML = '';
     elements.game.promptContainer.innerHTML = '';
+    
+    // 记录本轮开始时间
+    gameState.lastClickTime = Date.now();
     
     // 获取当前难度设置
     const difficultySettings = gameConfig.difficulties[gameState.difficulty];
@@ -531,6 +547,15 @@ function shuffleArray(array) {
 
 // 处理正确答案
 function handleCorrectAnswer(button) {
+    // 记录点击统计
+    gameState.totalClicks++;
+    gameState.correctClicks++;
+    
+    // 计算并记录反应时间
+    const clickTime = Date.now();
+    const reactionTime = (clickTime - gameState.lastClickTime) / 1000; // 转换为秒
+    gameState.clickTimes.push(reactionTime);
+    
     // 播放正确音效
     elements.sounds.correct.play();
     
@@ -569,6 +594,9 @@ function handleCorrectAnswer(button) {
 
 // 处理错误答案
 function handleWrongAnswer(button) {
+    // 记录点击统计
+    gameState.totalClicks++;
+    
     // 如果有免疫，则不计错误
     if (gameState.immunityActive) {
         gameState.immunityActive = false;
@@ -849,6 +877,26 @@ function updateResultScreen() {
     elements.result.clearedLevels.textContent = gameState.clearedLevels;
     elements.result.unlockedContainer.innerHTML = '';
     
+    // 计算并显示正确率
+    const accuracy = gameState.totalClicks > 0 
+        ? Math.round((gameState.correctClicks / gameState.totalClicks) * 100) 
+        : 0;
+    elements.result.accuracy.textContent = `${accuracy}%`;
+    
+    // 计算并显示最快反应时间
+    let fastestTime = gameState.clickTimes.length > 0 
+        ? Math.min(...gameState.clickTimes).toFixed(2) 
+        : "0.00";
+    elements.result.fastestTime.textContent = fastestTime;
+    
+    // 计算并显示平均反应时间
+    let averageTime = "0.00";
+    if (gameState.clickTimes.length > 0) {
+        const sum = gameState.clickTimes.reduce((a, b) => a + b, 0);
+        averageTime = (sum / gameState.clickTimes.length).toFixed(2);
+    }
+    elements.result.averageTime.textContent = averageTime;
+    
     // 获取结果按钮容器
     const resultButtons = document.querySelector('.result-buttons');
     
@@ -884,8 +932,19 @@ function renderAchievements() {
 
 // 分享结果
 function shareResult() {
+    // 计算正确率和平均反应时间
+    const accuracy = gameState.totalClicks > 0 
+        ? Math.round((gameState.correctClicks / gameState.totalClicks) * 100) 
+        : 0;
+    
+    let averageTime = "0.00";
+    if (gameState.clickTimes.length > 0) {
+        const sum = gameState.clickTimes.reduce((a, b) => a + b, 0);
+        averageTime = (sum / gameState.clickTimes.length).toFixed(2);
+    }
+    
     // 创建分享文本
-    const shareText = `我在《字色快打！》中获得了${gameState.score}分，最高连击${gameState.maxCombo}次，通过了${gameState.clearedLevels}关！来挑战我吧！`;
+    const shareText = `我在《字色快打！》中获得了${gameState.score}分，最高连击${gameState.maxCombo}次，通过了${gameState.clearedLevels}关！正确率${accuracy}%，平均反应时间${averageTime}秒。来挑战我吧！`;
     
     // 尝试使用Web Share API
     if (navigator.share) {
