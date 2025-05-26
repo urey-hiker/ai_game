@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>字色快打！- 反应力游戏</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- 主菜单界面 -->
+        <div id="main-menu" class="screen active">
+            <h1 class="game-title">字色快打！</h1>
+            <div class="mascot">
+                <div class="mascot-image"></div>
+            </div>
+            <div class="menu-options">
+                <button id="start-game" class="btn btn-primary">开始游戏</button>
+                <button id="show-rules" class="btn">游戏规则</button>
+                <button id="show-achievements" class="btn">成就</button>
+            </div>
+        </div>
+
+        <!-- 规则界面 -->
+        <div id="rules-screen" class="screen">
+            <h2>游戏规则</h2>
+            <div class="rules-content">
+                <p><strong>核心规则：</strong>当按钮的<span class="highlight">字体颜色</span>与<span class="highlight">文字内容所指的颜色</span>不一致时，点击该按钮得分！</p>
+                <div class="rule-examples">
+                    <div class="example correct">
+                        <span style="color: red;">黄</span>
+                        <p>正确！(红色的"黄"字)</p>
+                    </div>
+                    <div class="example incorrect">
+                        <span style="color: red;">红</span>
+                        <p>错误！(红色的"红"字)</p>
+                    </div>
+                </div>
+                <p><strong>连击奖励：</strong></p>
+                <ul>
+                    <li>5连击：3秒内分数×2</li>
+                    <li>10连击：下轮额外+2秒答题时间</li>
+                    <li>15连击：临时"错误免疫"（1次错误不计惩罚）</li>
+                </ul>
+            </div>
+            <button id="back-from-rules" class="btn btn-back">返回</button>
+        </div>
+
+        <!-- 成就界面 -->
+        <div id="achievements-screen" class="screen">
+            <h2>成就</h2>
+            <div class="achievements-list">
+                <!-- 成就会通过JS动态生成 -->
+            </div>
+            <button id="back-from-achievements" class="btn btn-back">返回</button>
+        </div>
+
+        <!-- 难度选择界面 -->
+        <div id="difficulty-screen" class="screen">
+            <h2>选择难度</h2>
+            <div class="difficulty-options">
+                <button id="easy" class="btn btn-difficulty">基础难度</button>
+                <button id="medium" class="btn btn-difficulty" disabled>进阶难度 (需通过基础难度)</button>
+                <button id="hard" class="btn btn-difficulty" disabled>地狱难度 (需通过进阶难度)</button>
+            </div>
+            <button id="back-from-difficulty" class="btn btn-back">返回</button>
+        </div>
+
+        <!-- 游戏界面 -->
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <div class="score-container">
+                    <span>分数: </span>
+                    <span id="score">0</span>
+                </div>
+                <div class="combo-container">
+                    <span>连击: </span>
+                    <span id="combo">0</span>
+                </div>
+                <div class="time-container">
+                    <span>时间: </span>
+                    <span id="time">5</span>
+                </div>
+                <div class="level-container">
+                    <span>关卡: </span>
+                    <span id="level">1</span>
+                </div>
+            </div>
+
+            <div class="countdown-overlay" id="countdown">
+                <div class="countdown-number">3</div>
+            </div>
+
+            <div class="game-area">
+                <div id="options-container" class="options-container">
+                    <!-- 选项按钮会通过JS动态生成 -->
+                </div>
+            </div>
+
+            <div class="mascot-game">
+                <div class="mascot-image"></div>
+            </div>
+        </div>
+
+        <!-- 结果界面 -->
+        <div id="result-screen" class="screen">
+            <h2>游戏结束</h2>
+            <div class="result-stats">
+                <p>最终分数: <span id="final-score">0</span></p>
+                <p>最高连击: <span id="max-combo">0</span></p>
+                <p>通过关卡: <span id="cleared-levels">0</span></p>
+            </div>
+            <div class="unlocked-item" id="unlocked-container">
+                <!-- 解锁内容会通过JS动态生成 -->
+            </div>
+            <div class="result-buttons">
+                <button id="play-again" class="btn btn-primary">再玩一次</button>
+                <button id="share-result" class="btn">分享成绩</button>
+                <button id="back-to-menu" class="btn">返回主菜单</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 音效资源 -->
+    <audio id="correct-sound" src="sounds/correct.mp3" preload="auto"></audio>
+    <audio id="wrong-sound" src="sounds/wrong.mp3" preload="auto"></audio>
+    <audio id="combo-sound" src="sounds/combo.mp3" preload="auto"></audio>
+    <audio id="level-up-sound" src="sounds/level-up.mp3" preload="auto"></audio>
+
+    <script src="game.js"></script>
+</body>
+</html>
