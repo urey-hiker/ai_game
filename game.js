@@ -59,7 +59,8 @@ const gameState = {
     immunityActive: false,
     unlockedAchievements: [],
     unlockedDifficulties: ['easy'],
-    currentCorrectOption: null // 用于基础难度下保存当前正确选项
+    currentCorrectOption: null, // 用于基础难度下保存当前正确选项
+    debugMode: false // 调试模式开关
 };
 
 // DOM元素引用
@@ -118,8 +119,44 @@ const elements = {
 function initGame() {
     loadSavedData();
     setupEventListeners();
+    setupDebugMode();
     updateDifficultyButtons();
     renderAchievements();
+}
+
+// 设置调试模式
+function setupDebugMode() {
+    // 添加键盘事件监听器，按下Ctrl+D切换调试模式
+    document.addEventListener('keydown', function(event) {
+        // 检测Ctrl+D组合键
+        if (event.ctrlKey && event.key === 'd') {
+            // 阻止默认行为（浏览器的书签功能）
+            event.preventDefault();
+            
+            // 切换调试模式
+            gameState.debugMode = !gameState.debugMode;
+            
+            // 显示调试模式状态
+            const message = gameState.debugMode ? '调试模式已开启！所有点击都将视为正确' : '调试模式已关闭';
+            showDebugMessage(message);
+            
+            console.log('Debug mode:', gameState.debugMode);
+        }
+    });
+}
+
+// 显示调试信息
+function showDebugMessage(message) {
+    const debugMessage = document.createElement('div');
+    debugMessage.className = 'debug-message';
+    debugMessage.textContent = message;
+    
+    document.body.appendChild(debugMessage);
+    
+    // 2秒后移除消息
+    setTimeout(() => {
+        debugMessage.remove();
+    }, 2000);
 }
 
 // 加载保存的游戏数据
@@ -391,14 +428,19 @@ function handleEasyModeClick(button) {
     const targetColor = button.style.color;
     const targetText = button.textContent;
     
-    // 检查是否是正确选项
-    if (targetColor === gameState.currentCorrectOption.color && 
-        targetText === gameState.currentCorrectOption.text) {
-        // 正确
+    // 在调试模式下，所有点击都视为正确
+    if (gameState.debugMode) {
         handleCorrectAnswer(button);
     } else {
-        // 错误
-        handleWrongAnswer(button);
+        // 检查是否是正确选项
+        if (targetColor === gameState.currentCorrectOption.color && 
+            targetText === gameState.currentCorrectOption.text) {
+            // 正确
+            handleCorrectAnswer(button);
+        } else {
+            // 错误
+            handleWrongAnswer(button);
+        }
     }
     
     // 检查是否需要进入下一关
@@ -413,12 +455,17 @@ function handleNormalModeClick(button, isDistractor) {
     const targetColor = button.style.color;
     const targetText = button.textContent;
     
-    if (isDistractor || targetColor === gameConfig.textMap[targetText]) {
-        // 错误：干扰项或颜色=文字
-        handleWrongAnswer(button);
-    } else {
-        // 正确：颜色≠文字
+    // 在调试模式下，所有点击都视为正确
+    if (gameState.debugMode) {
         handleCorrectAnswer(button);
+    } else {
+        if (isDistractor || targetColor === gameConfig.textMap[targetText]) {
+            // 错误：干扰项或颜色=文字
+            handleWrongAnswer(button);
+        } else {
+            // 正确：颜色≠文字
+            handleCorrectAnswer(button);
+        }
     }
     
     // 检查是否需要进入下一关
