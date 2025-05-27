@@ -111,11 +111,30 @@ function initGame() {
         window.init3DTitle();
     }
 
-    // 页面加载时立即播放主菜单音乐
-    playHomeMusic();
+    // 设置点击继续功能
+    setupClickToContinue();
 
-    // 显示主菜单
+    // 显示主菜单（但菜单选项隐藏，等待点击）
     showScreen('mainMenu');
+}
+
+// 设置点击继续功能
+function setupClickToContinue() {
+    const clickOverlay = document.getElementById('click-to-continue');
+    const menuOptions = document.querySelector('.menu-options');
+    
+    if (clickOverlay) {
+        clickOverlay.addEventListener('click', function() {
+            // 播放主菜单音乐
+            playHomeMusic();
+            
+            // 显示菜单选项
+            menuOptions.style.display = 'flex';
+            
+            // 隐藏点击提示层
+            clickOverlay.style.display = 'none';
+        });
+    }
 }
 
 // 设置调试模式
@@ -1150,8 +1169,10 @@ function playHomeMusic() {
     elements.sounds.home.currentTime = 0;
     // 设置音量
     elements.sounds.home.volume = 0.4;
+    // 设置循环播放
+    elements.sounds.home.loop = true;
     // 播放音乐
     elements.sounds.home.play().catch(error => {
-        console.log('主菜单音乐播放失败:', error);
+        console.log('主菜单音乐播放失败，等待用户交互后再播放:', error);
     });
 }
