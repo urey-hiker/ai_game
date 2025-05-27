@@ -754,3 +754,82 @@ body {
         transform: translateY(-15px);
     }
 }
+/* 规则页面样式增强 */
+.rules-content {
+    max-width: 90%;
+    margin: 0 auto;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.rule-examples {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.example {
+    border-radius: var(--border-radius);
+    padding: 15px;
+    margin: 10px;
+    text-align: center;
+    width: 120px;
+}
+
+.example span {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.example p {
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+.correct {
+    background-color: rgba(76, 175, 80, 0.2);
+    border: 2px solid #4CAF50;
+}
+
+.incorrect {
+    background-color: rgba(244, 67, 54, 0.2);
+    border: 2px solid #F44336;
+}
+
+.highlight {
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 1.1em;
+    text-decoration: underline;
+    padding: 0 2px;
+}
+
+.combo-reward, .achievement {
+    color: var(--secondary-color);
+    font-weight: bold;
+}
+
+.rules-content ul {
+    padding-left: 20px;
+    margin: 10px 0;
+}
+
+.rules-content li {
+    margin-bottom: 8px;
+}
+
+@media (max-width: 500px) {
+    .rules-content {
+        font-size: 0.9rem;
+    }
+    
+    .example {
+        width: 100px;
+        padding: 10px;
+    }
+    
+    .example span {
+        font-size: 1.8rem;
+    }
+}

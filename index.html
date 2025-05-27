@@ -33,6 +33,7 @@
             <h2>游戏规则</h2>
             <div class="rules-content">
                 <p><strong>核心规则：</strong>当按钮的<span class="highlight">字体颜色</span>与<span class="highlight">文字内容所指的颜色</span>不一致时，点击该按钮得分！</p>
+                
                 <div class="rule-examples">
                     <div class="example correct">
                         <span style="color: red;">黄</span>
@@ -43,11 +44,32 @@
                         <p>错误！(红色的"红"字)</p>
                     </div>
                 </div>
+                
+                <p><strong>游戏模式：</strong></p>
+                <ul>
+                    <li><strong>基础模式：</strong> 根据提示词点击对应的选项</li>
+                    <li><strong>高级模式：</strong> 自行判断字体颜色与文字内容是否一致</li>
+                </ul>
+                
                 <p><strong>连击奖励：</strong></p>
                 <ul>
-                    <li>5连击：3秒内分数×2</li>
-                    <li>10连击：下轮额外+2秒答题时间</li>
-                    <li>15连击：临时"错误免疫"（1次错误不计惩罚）</li>
+                    <li><span class="combo-reward">5连击：</span> 3秒内分数×2</li>
+                    <li><span class="combo-reward">10连击：</span> 下轮额外+2秒答题时间</li>
+                    <li><span class="combo-reward">15连击：</span> 临时"错误免疫"（1次错误不计惩罚）</li>
+                </ul>
+                
+                <p><strong>难度提升：</strong></p>
+                <ul>
+                    <li>随着分数提高，游戏会增加更多颜色选项</li>
+                    <li>选项数量会随关卡增加</li>
+                    <li>反应时间要求会逐渐提高</li>
+                </ul>
+                
+                <p><strong>成就系统：</strong></p>
+                <ul>
+                    <li><span class="achievement">连击王者：</span> 单次达成15连击</li>
+                    <li><span class="achievement">速通达人：</span> 1分钟内通关3关</li>
+                    <li><span class="achievement">不屈战神：</span> 连续错误5次仍通关</li>
                 </ul>
             </div>
             <button id="back-from-rules" class="btn btn-back">返回</button>
