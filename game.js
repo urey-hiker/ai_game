@@ -3,30 +3,6 @@ const gameConfig = {
     // 颜色-文字映射
     textMap: { '红': 'red', '黄': 'yellow', '蓝': 'blue', '绿': 'green', '紫': 'purple', '粉': 'pink' },
     
-    // 难度设置
-    difficulties: {
-        easy: {
-            colors: ['red', 'yellow', 'blue'],
-            texts: ['红', '黄', '蓝'],
-            optionsCount: 4,
-            timeLimit: 20,
-            targetScore: 100
-        },
-        medium: {
-            colors: ['red', 'yellow', 'blue', 'green'],
-            texts: ['红', '黄', '蓝', '绿'],
-            optionsCount: 6,
-            timeLimit: 20,
-            targetScore: 200
-        },
-        hard: {
-            colors: ['red', 'yellow', 'blue', 'green', 'purple', 'pink'],
-            texts: ['红', '黄', '蓝', '绿', '紫', '粉', '彩虹'], // 彩虹是干扰项
-            optionsCount: 6,
-            timeLimit: 20,
-            targetScore: 300
-        }
-    },
     
     // 连击奖励配置
     comboRewards: {
@@ -77,7 +53,6 @@ const elements = {
         mainMenu: document.getElementById('main-menu'),
         rules: document.getElementById('rules-screen'),
         achievements: document.getElementById('achievements-screen'),
-        difficulty: document.getElementById('difficulty-screen'),
         game: document.getElementById('game-screen'),
         result: document.getElementById('result-screen')
     },
@@ -87,15 +62,9 @@ const elements = {
         showAchievements: document.getElementById('show-achievements'),
         backFromRules: document.getElementById('back-from-rules'),
         backFromAchievements: document.getElementById('back-from-achievements'),
-        backFromDifficulty: document.getElementById('back-from-difficulty'),
         playAgain: document.getElementById('play-again'),
         shareResult: document.getElementById('share-result'),
-        backToMenu: document.getElementById('back-to-menu'),
-        difficultyOptions: {
-            easy: document.getElementById('easy'),
-            medium: document.getElementById('medium'),
-            hard: document.getElementById('hard')
-        }
+        backToMenu: document.getElementById('back-to-menu')
     },
     game: {
         score: document.getElementById('score'),
@@ -508,72 +477,7 @@ function generateAdvancedRound() {
     });
 }
 
-// 生成基础难度的一轮游戏
-function generateEasyModeRound(difficultySettings) {
-    // 1. 随机选择一个颜色和文字
-    const colorIndex = Math.floor(Math.random() * difficultySettings.colors.length);
-    const textIndex = Math.floor(Math.random() * difficultySettings.texts.length);
-    
-    const targetColor = difficultySettings.colors[colorIndex];
-    const targetText = difficultySettings.texts[textIndex];
-    
-    // 2. 创建提示词
-    const prompt = document.createElement('div');
-    prompt.textContent = `请点击${getColorName(targetColor)}的"${targetText}"字`;
-    elements.game.promptContainer.appendChild(prompt);
-    
-    // 3. 创建正确选项
-    const correctOption = createOptionButton(targetColor, targetText, false);
-    
-    // 4. 创建错误选项
-    const wrongOptions = [];
-    for (let i = 0; i < difficultySettings.optionsCount - 1; i++) {
-        let wrongColor, wrongText;
-        do {
-            // 生成颜色相同但文字不同的选项，或文字相同但颜色不同的选项
-            if (Math.random() < 0.5) {
-                wrongColor = targetColor;
-                do {
-                    wrongText = difficultySettings.texts[Math.floor(Math.random() * difficultySettings.texts.length)];
-                } while (wrongText === targetText);
-            } else {
-                do {
-                    wrongColor = difficultySettings.colors[Math.floor(Math.random() * difficultySettings.colors.length)];
-                } while (wrongColor === targetColor);
-                wrongText = targetText;
-            }
-            // 只需保证和正确选项不同即可
-        } while (wrongColor === targetColor && wrongText === targetText);
-        wrongOptions.push(createOptionButton(wrongColor, wrongText, false));
-    }
-    
-    // 5. 随机排列所有选项
-    const allOptions = [correctOption, ...wrongOptions];
-    shuffleArray(allOptions);
-    
-    // 6. 添加到容器
-    allOptions.forEach(option => {
-        elements.game.optionsContainer.appendChild(option);
-    });
-    
-    // 保存当前正确选项信息，用于判断
-    gameState.currentCorrectOption = {
-        color: targetColor,
-        text: targetText
-    };
-}
-
-// 生成普通模式的一轮游戏（中级和高级难度）
-function generateNormalModeRound(difficultySettings) {
-    // 清空选项容器
-    elements.game.optionsContainer.innerHTML = '';
-    
-    // 生成选项
-    for (let i = 0; i < difficultySettings.optionsCount; i++) {
-        const option = generateOption(difficultySettings);
-        elements.game.optionsContainer.appendChild(option);
-    }
-}
+// 创建选项按钮
 
 // 创建选项按钮
 function createOptionButton(color, text, isDistractor) {
@@ -986,9 +890,6 @@ function endGame() {
     // 播放游戏结束音效
     elements.sounds.win.play();
     
-    // 检查是否解锁新难度
-    checkDifficultyUnlock();
-    
     // 检查成就
     checkAchievements();
     
@@ -1000,19 +901,6 @@ function endGame() {
     
     // 显示结果界面
     showScreen('result');
-}
-
-// 检查难度解锁
-function checkDifficultyUnlock() {
-    if (gameState.difficulty === 'easy' && gameState.level >= 5 && !gameState.unlockedDifficulties.includes('medium')) {
-        gameState.unlockedDifficulties.push('medium');
-        showUnlockNotification('解锁进阶难度！');
-    }
-    
-    if (gameState.difficulty === 'medium' && gameState.level >= 5 && !gameState.unlockedDifficulties.includes('hard')) {
-        gameState.unlockedDifficulties.push('hard');
-        showUnlockNotification('解锁地狱难度！');
-    }
 }
 
 // 检查成就

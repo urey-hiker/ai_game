@@ -297,3 +297,11 @@ function saveGameData() {
 - 修改了选项生成函数，在添加选项前先调整容器列数
 - 优化了移动设备上的选项布局，减小了间距
 - 这个改进解决了选项排版不均衡的问题，使界面更加美观
+### 2025-05-26 清理未使用代码
+- 删除了与难度选择相关的不再使用的代码：
+  - 移除了`difficulties`配置对象
+  - 移除了难度选择界面相关的DOM引用
+  - 删除了`generateEasyModeRound`和`generateNormalModeRound`函数
+  - 删除了`checkDifficultyUnlock`函数
+- 从HTML中移除了难度选择界面
+- 这次清理提高了代码的可维护性，减少了不必要的复杂度
