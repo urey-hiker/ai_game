@@ -19,7 +19,8 @@
 
 body {
     font-family: 'Baloo 2', cursive;
-    background: linear-gradient(135deg, #c9d6ff, #e2e2e2);
+    background: url('images/background.png') no-repeat center center fixed;
+    background-size: cover;
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -39,6 +40,7 @@ body {
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
     overflow: hidden;
+    z-index: 10;
 }
 
 /* 按钮样式 */
