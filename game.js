@@ -1060,15 +1060,52 @@ function showScoreEffect(button, score) {
     scoreEffect.style.left = `${left}px`;
     scoreEffect.style.top = `${top}px`;
     
-    // 随机生成一个水平偏移量，使得特效有不同的弹出方向
-    const xOffset = (Math.random() * 60 - 30); // -30px 到 30px 之间的随机值
-    scoreEffect.style.setProperty('--x-offset', `${xOffset}px`);
+    // 物理参数
+    const physics = {
+        x: 0,
+        y: 0,
+        vx: (Math.random() - 0.5) * 10, // 随机水平速度
+        vy: -Math.random() * 15 - 10,   // 随机向上的初始速度
+        gravity: 0.8,                   // 重力加速度
+        friction: 0.99                  // 摩擦力
+    };
     
     // 添加到游戏容器
     elements.screens.game.appendChild(scoreEffect);
+    scoreEffect.style.transform = 'translate(0, 0)';
     
-    // 动画结束后移除元素
-    scoreEffect.addEventListener('animationend', () => {
-        scoreEffect.remove();
-    });
+    // 使用requestAnimationFrame实现平滑动画
+    let opacity = 1;
+    let animationId;
+    
+    function animate() {
+        // 更新速度和位置
+        physics.vy += physics.gravity;  // 应用重力
+        physics.vx *= physics.friction; // 应用摩擦力
+        physics.x += physics.vx;
+        physics.y += physics.vy;
+        
+        // 更新元素位置
+        scoreEffect.style.transform = `translate(${physics.x}px, ${physics.y}px)`;
+        
+        // 逐渐降低透明度
+        opacity -= 0.01;
+        if (opacity > 0) {
+            scoreEffect.style.opacity = opacity;
+        }
+        
+        // 检查是否已经离开屏幕或完全透明
+        if (opacity > 0 && 
+            top + physics.y < gameRect.height + 100 && 
+            left + physics.x > -100 && 
+            left + physics.x < gameRect.width + 100) {
+            animationId = requestAnimationFrame(animate);
+        } else {
+            scoreEffect.remove();
+            cancelAnimationFrame(animationId);
+        }
+    }
+    
+    // 开始动画
+    animationId = requestAnimationFrame(animate);
 }

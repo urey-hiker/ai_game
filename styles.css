@@ -609,24 +609,4 @@ body {
     z-index: 100;
     opacity: 1;
     transform: translateY(0);
-    animation: score-animation 1.5s ease-out forwards;
-}
-
-@keyframes score-animation {
-    0% {
-        opacity: 0;
-        transform: translateY(0) translateX(0) scale(0.5);
-    }
-    20% {
-        opacity: 1;
-        transform: translateY(-30px) translateX(var(--x-offset)) scale(1.2);
-    }
-    50% {
-        opacity: 1;
-        transform: translateY(-20px) translateX(calc(var(--x-offset) * 1.5)) scale(1);
-    }
-    100% {
-        opacity: 0;
-        transform: translateY(100px) translateX(calc(var(--x-offset) * 2)) scale(0.8);
-    }
 }
