@@ -57,6 +57,15 @@
 
         <!-- 游戏界面 -->
         <div id="game-screen" class="screen">
+            <div class="game-area">
+                <div id="prompt-container" class="prompt-container">
+                    <!-- 提示词会通过JS动态生成 -->
+                </div>
+                <div id="options-container" class="options-container">
+                    <!-- 选项按钮会通过JS动态生成 -->
+                </div>
+            </div>
+            
             <div class="game-header">
                 <div class="score-container">
                     <span>分数: </span>
@@ -78,15 +87,6 @@
 
             <div class="countdown-overlay" id="countdown">
                 <div class="countdown-number">3</div>
-            </div>
-
-            <div class="game-area">
-                <div id="prompt-container" class="prompt-container">
-                    <!-- 提示词会通过JS动态生成 -->
-                </div>
-                <div id="options-container" class="options-container">
-                    <!-- 选项按钮会通过JS动态生成 -->
-                </div>
             </div>
 
             <div class="combo-indicator" id="combo-indicator">
