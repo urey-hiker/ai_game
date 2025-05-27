@@ -45,11 +45,34 @@
                     </div>
                 </div>
                 
-                <p><strong>游戏模式：</strong></p>
+                <p><strong>游戏玩法：</strong></p>
                 <ul>
-                    <li><strong>基础模式：</strong> 根据提示词点击对应的选项</li>
-                    <li><strong>高级模式：</strong> 自行判断字体颜色与文字内容是否一致</li>
+                    <li><strong>玩法1：</strong> 根据提示词点击对应的选项</li>
                 </ul>
+                
+                <div class="gameplay-example">
+                    <div class="prompt-example">请点击<span class="highlight">"对应"</span>的字：红色的 黄</div>
+                    <div class="options-example">
+                        <button class="option-btn-example" style="color: blue;">红</button>
+                        <button class="option-btn-example" style="color: red;">黄</button>
+                        <button class="option-btn-example" style="color: green;">蓝</button>
+                        <button class="option-btn-example" style="color: yellow;">绿</button>
+                    </div>
+                </div>
+                
+                <ul>
+                    <li><strong>玩法2：</strong> 自行判断字体颜色与文字内容是否一致</li>
+                </ul>
+                
+                <div class="gameplay-example">
+                    <div class="options-example">
+                        <button class="option-btn-example" style="color: red;">黄</button>
+                        <button class="option-btn-example" style="color: blue;">蓝</button>
+                        <button class="option-btn-example" style="color: green;">绿</button>
+                        <button class="option-btn-example" style="color: red;">红</button>
+                    </div>
+                    <p class="example-caption">点击"红色的黄"和"蓝色的蓝"（颜色≠文字）</p>
+                </div>
                 
                 <p><strong>连击奖励：</strong></p>
                 <ul>
@@ -57,17 +80,9 @@
                     <li><span class="combo-reward">10连击：</span> 下轮额外+2秒答题时间</li>
                     <li><span class="combo-reward">15连击：</span> 临时"错误免疫"（1次错误不计惩罚）</li>
                 </ul>
-                
-                <p><strong>难度提升：</strong></p>
-                <ul>
-                    <li>随着分数提高，游戏会增加更多颜色选项</li>
-                    <li>选项数量会随关卡增加</li>
-                    <li>反应时间要求会逐渐提高</li>
-                </ul>
-                
-                <p><strong>成就系统：</strong></p>
-                <ul>
-                    <li><span class="achievement">连击王者：</span> 单次达成15连击</li>
+            </div>
+            <button id="back-from-rules" class="btn btn-back">返回</button>
+        </div>
                     <li><span class="achievement">速通达人：</span> 1分钟内通关3关</li>
                     <li><span class="achievement">不屈战神：</span> 连续错误5次仍通关</li>
                 </ul>
