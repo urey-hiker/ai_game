@@ -19,8 +19,7 @@
 
 body {
     font-family: 'Baloo 2', cursive;
-    background: url('images/background.png') no-repeat center center fixed;
-    background-size: cover;
+    background: linear-gradient(135deg, #c9d6ff, #e2e2e2);
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -222,6 +221,10 @@ body {
     height: 100%;
     width: 100%;
     padding-top: 60px;
+    background: url('images/background.png') no-repeat center center;
+    background-size: cover;
+    border-radius: var(--border-radius);
+    position: relative;
 }
 
 .prompt-container {
@@ -245,6 +248,9 @@ body {
     max-width: 90%;
     margin-top: 20px;
     justify-content: center;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 15px;
+    border-radius: var(--border-radius);
 }
 
 .option-btn {
