@@ -19,7 +19,7 @@ let rMesh;
 let lights = [];
 let clock;
 let isAnimating = true;
-let headTextDiv, reactionTextDiv;
+let headTextDiv;
 
 // 初始化函数
 function init3DTitle() {
@@ -68,7 +68,7 @@ function init3DTitle() {
 function createFallbackTitle() {
     const fallbackTitle = document.createElement('div');
     fallbackTitle.className = 'fallback-title';
-    fallbackTitle.innerHTML = '<span class="head-text">头文字</span><span class="r-text">R</span><span class="reaction-text">Reaction</span>';
+    fallbackTitle.innerHTML = '<span class="head-text">头文字</span><span class="r-text">R</span>';
     titleContainer.appendChild(fallbackTitle);
 }
 
@@ -103,19 +103,13 @@ function createTitleElements() {
     headTextDiv.textContent = '头文字';
     titleContainer.appendChild(headTextDiv);
     
-    // 创建HTML元素显示"Reaction"
-    reactionTextDiv = document.createElement('div');
-    reactionTextDiv.className = 'reaction-text-overlay';
-    reactionTextDiv.textContent = 'Reaction';
-    titleContainer.appendChild(reactionTextDiv);
-    
     // 只用Three.js渲染"R"字母
     const loader = new THREE.FontLoader();
     loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', function(font) {
         // 创建3D的"R"
         const rGeometry = new THREE.TextGeometry('R', {
             font: font,
-            size: 7, // 增大字体大小
+            size: 9, // 进一步增大字体大小
             height: 5, // 厚度≥5单位
             curveSegments: 12,
             bevelEnabled: true,
@@ -135,39 +129,14 @@ function createTitleElements() {
         rMesh = new THREE.Mesh(rGeometry, rMaterial);
         rGeometry.computeBoundingBox();
         const rWidth = rGeometry.boundingBox.max.x - rGeometry.boundingBox.min.x;
-        // 将R放在中心位置
-        rMesh.position.set(0, 0, 0);
+        // 将R放在中心位置偏右
+        rMesh.position.set(5, 0, 2); // 增加z值使R在头文字上层
         scene.add(rMesh);
     });
 }
 
 // 添加事件监听器
 function addEventListeners() {
-    // 鼠标悬停在"Reaction"上
-    titleContainer.addEventListener('mousemove', function(event) {
-        if (!reactionTextDiv) return;
-        
-        const rect = titleContainer.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
-        
-        // 检查鼠标是否在Reaction文本上
-        const reactionRect = reactionTextDiv.getBoundingClientRect();
-        const isOverReaction = 
-            mouseX >= reactionRect.left - rect.left && 
-            mouseX <= reactionRect.right - rect.left &&
-            mouseY >= reactionRect.top - rect.top && 
-            mouseY <= reactionRect.bottom - rect.top;
-        
-        if (isOverReaction) {
-            // 悬停在Reaction上
-            reactionTextDiv.style.opacity = '0.8';
-        } else {
-            // 不在Reaction上
-            reactionTextDiv.style.opacity = '0.6';
-        }
-    });
-    
     // 点击"R"触发效果
     titleContainer.addEventListener('click', function(event) {
         if (!rMesh) return;

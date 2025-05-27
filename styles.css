@@ -655,31 +655,17 @@ body {
     display: block;
 }
 
-/* 头文字和Reaction的HTML覆盖层 */
+/* 头文字的HTML覆盖层 */
 .head-text-overlay {
     position: absolute;
-    left: 20%;
+    left: 50%;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translate(-100%, -50%);
     font-family: 'Uranus', sans-serif;
-    font-size: 3.5rem;
+    font-size: 4.5rem;
     color: #444;
     z-index: 10;
     pointer-events: none;
-}
-
-.reaction-text-overlay {
-    position: absolute;
-    left: 60%;
-    top: 50%;
-    transform: translateY(-50%);
-    font-family: 'Uranus', sans-serif;
-    font-size: 2.8rem;
-    background: linear-gradient(to right, #888888, #444444);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    z-index: 10;
-    transition: opacity 0.3s ease;
 }
 
 /* 降级2D标题样式 */
@@ -716,13 +702,7 @@ body {
     }
     
     .head-text-overlay {
-        font-size: 2.5rem;
-        left: 10%;
-    }
-    
-    .reaction-text-overlay {
-        font-size: 2rem;
-        left: 65%;
+        font-size: 3.2rem;
     }
     
     .fallback-title .head-text {
