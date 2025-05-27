@@ -658,7 +658,7 @@ body {
 /* 头文字和Reaction的HTML覆盖层 */
 .head-text-overlay {
     position: absolute;
-    left: 5%;
+    left: 20%;
     top: 50%;
     transform: translateY(-50%);
     font-family: 'Uranus', sans-serif;
@@ -670,12 +670,14 @@ body {
 
 .reaction-text-overlay {
     position: absolute;
-    right: 5%;
+    left: 60%;
     top: 50%;
     transform: translateY(-50%);
     font-family: 'Uranus', sans-serif;
     font-size: 2.8rem;
-    color: rgba(255, 255, 255, 0.6);
+    background: linear-gradient(to right, #888888, #444444);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     z-index: 10;
     transition: opacity 0.3s ease;
 }
@@ -715,12 +717,12 @@ body {
     
     .head-text-overlay {
         font-size: 2.5rem;
-        left: 2%;
+        left: 10%;
     }
     
     .reaction-text-overlay {
         font-size: 2rem;
-        right: 2%;
+        left: 65%;
     }
     
     .fallback-title .head-text {
