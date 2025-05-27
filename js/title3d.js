@@ -15,12 +15,12 @@ let isWebGLSupported = (function() {
 // 主要变量
 let scene, camera, renderer;
 let titleContainer;
-let headText, rText, reactionText;
+let rMesh;
 let particles = [];
 let lights = [];
-let mixer, clock;
-let rMesh, headMesh, reactionMesh;
+let clock;
 let isAnimating = true;
+let headTextDiv, reactionTextDiv;
 
 // 初始化函数
 function init3DTitle() {
@@ -74,33 +74,6 @@ function createFallbackTitle() {
     fallbackTitle.className = 'fallback-title';
     fallbackTitle.innerHTML = '<span class="head-text">头文字</span><span class="r-text">R</span><span class="reaction-text">Reaction</span>';
     titleContainer.appendChild(fallbackTitle);
-    
-    // 添加CSS样式
-    const style = document.createElement('style');
-    style.textContent = `
-        .fallback-title {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Uranus', sans-serif;
-            margin-bottom: 20px;
-        }
-        .head-text {
-            color: #444;
-            font-size: 2.5rem;
-        }
-        .r-text {
-            color: #ff5722;
-            font-size: 3rem;
-            font-weight: bold;
-            margin: 0 5px;
-        }
-        .reaction-text {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 2rem;
-        }
-    `;
-    document.head.appendChild(style);
 }
 
 // 添加灯光
@@ -128,32 +101,22 @@ function addLights() {
 
 // 创建标题元素
 function createTitleElements() {
-    // 由于无法直接将TTF字体转换为Three.js可用的JSON格式，我们继续使用默认字体
-    // 但在降级方案中使用Uranus字体
-    const loader = new THREE.FontLoader();
+    // 创建HTML元素显示"头文字"
+    headTextDiv = document.createElement('div');
+    headTextDiv.className = 'head-text-overlay';
+    headTextDiv.textContent = '头文字';
+    titleContainer.appendChild(headTextDiv);
     
+    // 创建HTML元素显示"Reaction"
+    reactionTextDiv = document.createElement('div');
+    reactionTextDiv.className = 'reaction-text-overlay';
+    reactionTextDiv.textContent = 'Reaction';
+    titleContainer.appendChild(reactionTextDiv);
+    
+    // 只用Three.js渲染"R"字母
+    const loader = new THREE.FontLoader();
     loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', function(font) {
-        // 创建"头文字"
-        const headGeometry = new THREE.TextGeometry('头文字', {
-            font: font,
-            size: 3,
-            height: 0.2,
-            curveSegments: 12,
-            bevelEnabled: false
-        });
-        
-        const headMaterial = new THREE.MeshPhongMaterial({
-            color: 0x444444,
-            shininess: 30
-        });
-        
-        headMesh = new THREE.Mesh(headGeometry, headMaterial);
-        headGeometry.computeBoundingBox();
-        const headWidth = headGeometry.boundingBox.max.x - headGeometry.boundingBox.min.x;
-        headMesh.position.set(-headWidth/2 - 5, 0, -2);
-        scene.add(headMesh);
-        
-        // 创建"R"
+        // 创建3D的"R"
         const rGeometry = new THREE.TextGeometry('R', {
             font: font,
             size: 5,
@@ -176,26 +139,6 @@ function createTitleElements() {
         const rWidth = rGeometry.boundingBox.max.x - rGeometry.boundingBox.min.x;
         rMesh.position.set(-rWidth/2, 0, 0);
         scene.add(rMesh);
-        
-        // 创建"Reaction"
-        const reactionGeometry = new THREE.TextGeometry('Reaction', {
-            font: font,
-            size: 2, // 字号小20%
-            height: 0.2,
-            curveSegments: 12,
-            bevelEnabled: false
-        });
-        
-        const reactionMaterial = new THREE.MeshPhongMaterial({
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.6
-        });
-        
-        reactionMesh = new THREE.Mesh(reactionGeometry, reactionMaterial);
-        reactionGeometry.computeBoundingBox();
-        reactionMesh.position.set(rWidth/2, -1, 0);
-        scene.add(reactionMesh);
     });
 }
 
@@ -304,23 +247,26 @@ function createParticles() {
 function addEventListeners() {
     // 鼠标悬停在"Reaction"上
     titleContainer.addEventListener('mousemove', function(event) {
-        if (!reactionMesh) return;
+        if (!reactionTextDiv) return;
         
         const rect = titleContainer.getBoundingClientRect();
-        const mouseX = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        const mouseY = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
         
-        const raycaster = new THREE.Raycaster();
-        raycaster.setFromCamera(new THREE.Vector2(mouseX, mouseY), camera);
+        // 检查鼠标是否在Reaction文本上
+        const reactionRect = reactionTextDiv.getBoundingClientRect();
+        const isOverReaction = 
+            mouseX >= reactionRect.left - rect.left && 
+            mouseX <= reactionRect.right - rect.left &&
+            mouseY >= reactionRect.top - rect.top && 
+            mouseY <= reactionRect.bottom - rect.top;
         
-        const intersects = raycaster.intersectObject(reactionMesh);
-        
-        if (intersects.length > 0) {
+        if (isOverReaction) {
             // 悬停在Reaction上
-            reactionMesh.material.opacity = 0.8;
+            reactionTextDiv.style.opacity = '0.8';
         } else {
             // 不在Reaction上
-            reactionMesh.material.opacity = 0.6;
+            reactionTextDiv.style.opacity = '0.6';
         }
     });
     
