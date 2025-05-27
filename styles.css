@@ -211,6 +211,7 @@ body {
     border-bottom: 2px solid var(--secondary-color);
     font-size: 1.2rem;
     font-weight: bold;
+    font-family: 'Uranus', sans-serif;
 }
 
 .game-area {
@@ -232,7 +233,7 @@ body {
     border-radius: var(--border-radius);
     margin-bottom: 20px;
     font-size: 1.5rem;
-    font-family: 'MaShanZheng', sans-serif; /* 使用马善政字体 */
+    font-family: 'Uranus', sans-serif; 
     font-weight: bold;
     color: var(--dark-color);
     box-shadow: var(--shadow);
@@ -267,7 +268,7 @@ body {
     align-items: center;
     box-shadow: var(--shadow);
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* 添加文字阴影 */
-    font-family: 'MaShanZheng', sans-serif; /* 使用马善政字体 */
+    font-family: 'Uranus', sans-serif; /* 使用马善政字体 */
 }
 
 .option-btn:hover {
@@ -296,6 +297,7 @@ body {
     font-size: 8rem;
     color: white;
     animation: countdownPulse 1s infinite;
+    font-family: 'Uranus', sans-serif;
 }
 
 @keyframes countdownPulse {
@@ -538,11 +540,13 @@ body {
 .combo-indicator .combo-number {
     font-size: 1.8rem;
     line-height: 1;
+    font-family: 'Uranus', sans-serif;
 }
 
 .combo-indicator .combo-text {
     font-size: 0.7rem;
     margin-top: -5px;
+    font-family: 'Uranus', sans-serif;
 }
 
 .combo-indicator.milestone {
@@ -592,8 +596,8 @@ body {
 }
 /* 添加马善政字体 */
 @font-face {
-    font-family: 'MaShanZheng';
-    src: url('fonts/MaShanZheng-Regular.ttf') format('truetype');
+    font-family: 'Uranus';
+    src: url('fonts/Uranus_Pixel_11Px.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -621,4 +625,25 @@ body {
 /* 错误特效样式 */
 .score-effect.wrong {
     color: var(--primary-color);
+}
+@font-face {
+    font-family: 'Uranus';
+    src: url('fonts/Uranus_Pixel_11Px.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+.score-container, .combo-container, .time-container, .level-container {
+    display: flex;
+    align-items: center;
+    font-family: 'Uranus', sans-serif;
+}
+
+.score-container span:last-child, 
+.combo-container span:last-child, 
+.time-container span:last-child, 
+.level-container span:last-child {
+    margin-left: 5px;
+    color: var(--primary-color);
+    font-size: 1.3rem;
+    font-family: 'Uranus', sans-serif;
 }
