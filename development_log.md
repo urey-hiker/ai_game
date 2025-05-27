@@ -451,3 +451,13 @@ function saveGameData() {
 - 添加了响应式设计，适配不同屏幕尺寸
 - 为不支持WebGL的设备提供了2D降级方案
 - 更新了页面标题和favicon
+### 2025-05-27 尝试使用Uranus字体替换3D标题
+- 尝试将3D标题中的默认字体替换为Uranus字体
+- 由于Three.js需要特殊格式的JSON字体文件，而不是直接使用TTF字体，需要进行转换
+- 创建了字体转换脚本`uranus_font_converter.js`，但需要Node.js环境和opentype.js库
+- 暂时保留3D场景中的默认字体，确保功能正常
+- 在降级方案中已正确使用Uranus字体
+- 后续可以通过以下方式解决：
+  1. 使用专业工具将Uranus字体转换为Three.js兼容的JSON格式
+  2. 使用在线服务如Facetype.js进行转换
+  3. 在Node.js环境中运行转换脚本

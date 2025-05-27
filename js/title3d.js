@@ -128,9 +128,10 @@ function addLights() {
 
 // 创建标题元素
 function createTitleElements() {
+    // 由于无法直接将TTF字体转换为Three.js可用的JSON格式，我们继续使用默认字体
+    // 但在降级方案中使用Uranus字体
     const loader = new THREE.FontLoader();
     
-    // 使用默认字体（后续可替换为Uranus字体）
     loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', function(font) {
         // 创建"头文字"
         const headGeometry = new THREE.TextGeometry('头文字', {
