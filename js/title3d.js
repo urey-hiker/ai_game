@@ -37,7 +37,7 @@ function init3DTitle() {
     // 创建相机
     const aspect = titleContainer.clientWidth / titleContainer.clientHeight;
     camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
-    camera.position.z = 25; // 增加相机距离，确保心跳时R不会超出视野
+    camera.position.z = 40; // 进一步增加相机距离，以适应更大的R
     
     // 创建渲染器
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -84,7 +84,7 @@ function addLights() {
     lights.push(spotLight);
     
     // 第二个聚光灯
-    const spotLight2 = new THREE.SpotLight(0xff9900, 0.8);
+    const spotLight2 = new THREE.SpotLight(0xffffff, 0.8);
     spotLight2.position.set(-10, -10, 15);
     spotLight2.angle = Math.PI / 8;
     spotLight2.penumbra = 0.1;
@@ -106,8 +106,8 @@ function createTitleElements() {
         // 创建3D的"R"
         const rGeometry = new THREE.TextGeometry('R', {
             font: font,
-            size: 9, // 进一步增大字体大小
-            height: 5, // 厚度≥5单位
+            size: 18, // 放大一倍，从9增加到18
+            height: 10, // 厚度也相应增加，从5增加到10
             curveSegments: 12,
             bevelEnabled: true,
             bevelThickness: 0.5,
@@ -116,7 +116,7 @@ function createTitleElements() {
         });
         
         const rMaterial = new THREE.MeshPhongMaterial({
-            color: 0xffa07a, // 低饱和橙红
+            color: 0x4a90e2, // 清新的蓝色
             shininess: 100,
             specular: 0xffffff,
             emissive: 0xff3300,
