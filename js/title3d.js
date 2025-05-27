@@ -94,43 +94,71 @@ function addLights() {
 
 // 创建标题元素
 function createTitleElements() {
-    // 创建HTML元素显示"头文字"
-    headTextDiv = document.createElement('div');
-    headTextDiv.className = 'head-text-overlay';
-    headTextDiv.textContent = '头文字';
-    titleContainer.appendChild(headTextDiv);
-    
-    // 只用Three.js渲染"R"字母
-    const loader = new THREE.FontLoader();
-    loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', function(font) {
-        // 创建3D的"R"
-        const rGeometry = new THREE.TextGeometry('R', {
+    // 创建3D的"头文字" - 使用HTML元素作为纹理
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    canvas.width = 512;
+    canvas.height = 256;
+  
+    // 等待字体加载
+    document.fonts.load("128px Uranus").then(() => {
+      // 设置文字样式
+      context.fillStyle = "#ffffff";
+      context.font = "bold 160px Uranus";
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+      context.fillText("头文字", canvas.width / 2, canvas.height / 2);
+  
+      // 创建纹理
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.needsUpdate = true;
+  
+      // 创建平面几何体 - 调整尺寸以匹配R的大小
+      const headGeometry = new THREE.PlaneGeometry(100, 50);
+      const headMaterial = new THREE.MeshPhongMaterial({
+        map: texture,
+        transparent: true,
+        side: THREE.DoubleSide,
+      });
+  
+      headTextMesh = new THREE.Mesh(headGeometry, headMaterial);
+      headTextMesh.position.set(-10, 0, 0);
+      scene.add(headTextMesh);
+  
+      // 创建3D的"R"
+      const loader = new THREE.FontLoader();
+      loader.load(
+        "https://threejs.org/examples/fonts/helvetiker_bold.typeface.json",
+        function (font) {
+          const rGeometry = new THREE.TextGeometry("R", {
             font: font,
-            size: 18, // 放大一倍，从9增加到18
-            height: 10, // 厚度也相应增加，从5增加到10
+            size: 18,
+            height: 10,
             curveSegments: 12,
             bevelEnabled: true,
             bevelThickness: 0.5,
             bevelSize: 0.3,
-            bevelSegments: 5
-        });
-        
-        const rMaterial = new THREE.MeshPhongMaterial({
-            color: 0x4a90e2, // 清新的蓝色
+            bevelSegments: 5,
+          });
+  
+          const rMaterial = new THREE.MeshPhongMaterial({
+            color: 0x4a90e2,
             shininess: 100,
             specular: 0xffffff,
             emissive: 0xff3300,
-            emissiveIntensity: 0.5
-        });
-        
-        rMesh = new THREE.Mesh(rGeometry, rMaterial);
-        rGeometry.computeBoundingBox();
-        const rWidth = rGeometry.boundingBox.max.x - rGeometry.boundingBox.min.x;
-        // 将R放在中心位置偏右
-        rMesh.position.set(5, 0, 2); // 增加z值使R在头文字上层
-        scene.add(rMesh);
+            emissiveIntensity: 0.5,
+          });
+  
+          rMesh = new THREE.Mesh(rGeometry, rMaterial);
+          rGeometry.computeBoundingBox();
+          const rWidth =
+            rGeometry.boundingBox.max.x - rGeometry.boundingBox.min.x;
+          rMesh.position.set(5, 0, 2); // 调整R的位置
+          scene.add(rMesh);
+        }
+      );
     });
-}
+  }
 
 // 窗口大小变化时调整
 function onWindowResize() {

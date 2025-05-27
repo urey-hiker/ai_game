@@ -118,6 +118,12 @@ body {
     height: 150px;
     margin-bottom: 20px;
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    .head-text-overlay {
+        flex-shrink: 0;
+    }
 }
 
 @keyframes pulse {
@@ -701,10 +707,7 @@ body {
 
 /* 头文字的HTML覆盖层 */
 .head-text-overlay {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-100%, -50%);
+  
     font-family: 'Uranus', sans-serif;
     font-size: 4.5rem;
     color: #444;
