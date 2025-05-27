@@ -1034,15 +1034,16 @@ document.addEventListener('DOMContentLoaded', initGame);
 // 根据选项数量调整容器的列数
 function adjustOptionsContainerColumns(optionsCount) {
     const container = elements.game.optionsContainer;
-
+    const isMobile = window.innerWidth <= 500;
+    
     // 根据选项数量设置合适的列数
     let columns;
     switch (optionsCount) {
         case 4:
-            columns = 2; // 2x2布局
+            columns = 2; // 始终使用2x2布局
             break;
         case 6:
-            columns = 3; // 3x2布局
+            columns = isMobile ? 2 : 3; // 移动端2x3布局，桌面端3x2布局
             break;
         case 9:
             columns = 3; // 3x3布局
@@ -1050,9 +1051,10 @@ function adjustOptionsContainerColumns(optionsCount) {
         default:
             columns = Math.ceil(Math.sqrt(optionsCount)); // 默认尽量接近正方形布局
     }
-
-    // 设置列数
-    container.style.gridTemplateColumns = `repeat(${columns}, 80px)`;
+    
+    // 设置列数和列宽
+    const columnWidth = isMobile ? 70 : 80;
+    container.style.gridTemplateColumns = `repeat(${columns}, ${columnWidth}px)`;
 }
 
 // 显示得分特效

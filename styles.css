@@ -243,7 +243,6 @@ body {
 
 .options-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
     grid-gap: 15px;
     max-width: 90%;
     margin-top: 20px;
@@ -403,7 +402,6 @@ body {
     }
     
     .options-container {
-        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)) !important;
         grid-gap: 10px;
     }
 }
