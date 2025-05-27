@@ -368,7 +368,7 @@ function generateBasicRound() {
     
     // 2. 创建提示词，突出显示"对应"
     const prompt = document.createElement('div');
-    prompt.innerHTML = `请点击${getColorName(targetColor)}的<span class="highlight">"对应"</span>"${targetText}"字`;
+    prompt.innerHTML = `请点击<span class="highlight">"对应"</span>的字：${getColorName(targetColor)} 的 ${targetText}`;
     elements.game.promptContainer.appendChild(prompt);
     
     // 3. 创建正确选项
@@ -607,6 +607,9 @@ function handleCorrectAnswer(button) {
     const baseScore = 10;
     let scoreToAdd = gameState.doubleScoreActive ? baseScore * 2 : baseScore;
     gameState.score += scoreToAdd;
+    
+    // 显示得分特效
+    showScoreEffect(button, scoreToAdd);
     
     // 增加连击
     gameState.combo++;
@@ -1038,4 +1041,34 @@ function adjustOptionsContainerColumns(optionsCount) {
     
     // 设置列数
     container.style.gridTemplateColumns = `repeat(${columns}, 80px)`;
+}
+// 显示得分特效
+function showScoreEffect(button, score) {
+    // 创建得分特效元素
+    const scoreEffect = document.createElement('div');
+    scoreEffect.className = 'score-effect';
+    scoreEffect.textContent = `+${score}`;
+    
+    // 计算初始位置（按钮中心）
+    const buttonRect = button.getBoundingClientRect();
+    const gameRect = elements.screens.game.getBoundingClientRect();
+    
+    // 设置初始位置（相对于游戏容器）
+    const left = buttonRect.left - gameRect.left + buttonRect.width / 2;
+    const top = buttonRect.top - gameRect.top + buttonRect.height / 2;
+    
+    scoreEffect.style.left = `${left}px`;
+    scoreEffect.style.top = `${top}px`;
+    
+    // 随机生成一个水平偏移量，使得特效有不同的弹出方向
+    const xOffset = (Math.random() * 60 - 30); // -30px 到 30px 之间的随机值
+    scoreEffect.style.setProperty('--x-offset', `${xOffset}px`);
+    
+    // 添加到游戏容器
+    elements.screens.game.appendChild(scoreEffect);
+    
+    // 动画结束后移除元素
+    scoreEffect.addEventListener('animationend', () => {
+        scoreEffect.remove();
+    });
 }

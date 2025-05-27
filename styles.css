@@ -598,3 +598,35 @@ body {
     text-decoration: underline;
     padding: 0 2px;
 }
+/* 得分特效样式 */
+.score-effect {
+    position: absolute;
+    color: var(--accent-color);
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    z-index: 100;
+    opacity: 1;
+    transform: translateY(0);
+    animation: score-animation 1.5s ease-out forwards;
+}
+
+@keyframes score-animation {
+    0% {
+        opacity: 0;
+        transform: translateY(0) translateX(0) scale(0.5);
+    }
+    20% {
+        opacity: 1;
+        transform: translateY(-30px) translateX(var(--x-offset)) scale(1.2);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-20px) translateX(calc(var(--x-offset) * 1.5)) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(100px) translateX(calc(var(--x-offset) * 2)) scale(0.8);
+    }
+}
