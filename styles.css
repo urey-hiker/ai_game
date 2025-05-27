@@ -590,3 +590,11 @@ body {
     font-weight: normal;
     font-style: normal;
 }
+/* 高亮提示词样式 */
+.highlight {
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 1.2em;
+    text-decoration: underline;
+    padding: 0 2px;
+}

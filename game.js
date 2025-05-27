@@ -263,7 +263,7 @@ function startGame() {
     };
     
     // 设置初始时间
-    gameState.time = 30; // 初始时间设置为30秒
+    gameState.time = 300; // 初始时间设置为30秒
     
     // 更新UI
     updateGameUI();
@@ -339,12 +339,16 @@ function generateDynamicRound() {
     // 根据当前级别生成选项
     const dynamicSettings = gameState.dynamicDifficulty;
     
-    // 如果是第一关，使用基础模式
+    // 如果是第一关，只使用基础模式
     if (gameState.level === 1) {
         generateBasicRound();
     } else {
-        // 否则使用高级模式
-        generateAdvancedRound();
+        // 第二关开始，随机选择玩法
+        if (Math.random() < 0.5) {
+            generateBasicRound();
+        } else {
+            generateAdvancedRound();
+        }
     }
 }
 
@@ -362,13 +366,13 @@ function generateBasicRound() {
     const targetColor = dynamicSettings.currentColors[colorIndex];
     const targetText = dynamicSettings.currentTexts[textIndex];
     
-    // 2. 创建提示词
+    // 2. 创建提示词，突出显示"对应"
     const prompt = document.createElement('div');
-    prompt.textContent = `请点击${getColorName(targetColor)}的"${targetText}"字`;
+    prompt.innerHTML = `请点击${getColorName(targetColor)}的<span class="highlight">"对应"</span>"${targetText}"字`;
     elements.game.promptContainer.appendChild(prompt);
     
     // 3. 创建正确选项
-    const correctOption = createOptionButton(targetColor, targetText, false);
+    const correctOption = createOptionButton(targetColor, targetText, false, 'basic');
     
     // 4. 创建错误选项
     const wrongOptions = [];
@@ -393,7 +397,7 @@ function generateBasicRound() {
             // 确保这个错误选项不符合"颜色≠文字"的正确条件
         } while (wrongColor !== gameConfig.textMap[wrongText]);
         
-        wrongOptions.push(createOptionButton(wrongColor, wrongText, false));
+        wrongOptions.push(createOptionButton(wrongColor, wrongText, false, 'basic'));
     }
     
     // 5. 随机排列所有选项
@@ -414,7 +418,8 @@ function generateBasicRound() {
     // 保存当前正确选项信息，用于判断
     gameState.currentCorrectOption = {
         color: targetColor,
-        text: targetText
+        text: targetText,
+        mode: 'basic'
     };
 }
 
@@ -425,9 +430,9 @@ function generateAdvancedRound() {
     // 清空选项容器
     elements.game.optionsContainer.innerHTML = '';
     
-    // 创建提示词
+    // 创建提示词，突出显示"不同"
     const prompt = document.createElement('div');
-    prompt.textContent = `点击颜色与文字不一致的选项`;
+    prompt.innerHTML = `点击颜色与文字<span class="highlight">"不同"</span>的选项`;
     elements.game.promptContainer.appendChild(prompt);
     
     // 生成选项
@@ -462,7 +467,7 @@ function generateAdvancedRound() {
             }
         }
         
-        options.push(createOptionButton(color, text, isDistractor));
+        options.push(createOptionButton(color, text, isDistractor, 'advanced'));
     }
     
     // 随机排列所有选项
@@ -475,27 +480,51 @@ function generateAdvancedRound() {
     options.forEach(option => {
         elements.game.optionsContainer.appendChild(option);
     });
+    
+    // 保存当前游戏模式
+    gameState.currentCorrectOption = {
+        mode: 'advanced'
+    };
 }
 
 // 创建选项按钮
 
 // 创建选项按钮
-function createOptionButton(color, text, isDistractor) {
+function createOptionButton(color, text, isDistractor, mode) {
     const button = document.createElement('button');
     button.className = 'option-btn';
     button.style.color = color;
     button.textContent = text;
+    button.dataset.mode = mode; // 添加模式标记
     
     // 添加点击事件
     button.addEventListener('click', () => {
-        if (gameState.level === 1) {
-            handleBasicModeClick(button);
-        } else {
-            handleAdvancedModeClick(button, isDistractor);
-        }
+        handleButtonClick(button);
     });
     
     return button;
+}
+
+// 处理按钮点击
+function handleButtonClick(button) {
+    const mode = gameState.currentCorrectOption.mode;
+    
+    // 在调试模式下，所有点击都视为正确
+    if (gameState.debugMode) {
+        handleCorrectAnswer(button);
+    } else {
+        if (mode === 'basic') {
+            handleBasicModeClick(button);
+        } else {
+            handleAdvancedModeClick(button);
+        }
+    }
+    
+    // 检查是否需要进入下一关
+    checkLevelProgress();
+    
+    // 开始新一轮
+    startRound();
 }
 
 // 处理基础模式的点击
@@ -503,51 +532,29 @@ function handleBasicModeClick(button) {
     const targetColor = button.style.color;
     const targetText = button.textContent;
     
-    // 在调试模式下，所有点击都视为正确
-    if (gameState.debugMode) {
+    // 检查是否是正确选项
+    if (targetColor === gameState.currentCorrectOption.color && 
+        targetText === gameState.currentCorrectOption.text) {
+        // 正确
         handleCorrectAnswer(button);
     } else {
-        // 检查是否是正确选项
-        if (targetColor === gameState.currentCorrectOption.color && 
-            targetText === gameState.currentCorrectOption.text) {
-            // 正确
-            handleCorrectAnswer(button);
-        } else {
-            // 错误
-            handleWrongAnswer(button);
-        }
+        // 错误
+        handleWrongAnswer(button);
     }
-    
-    // 检查是否需要进入下一关
-    checkLevelProgress();
-    
-    // 开始新一轮
-    startRound();
 }
 
 // 处理高级模式的点击
-function handleAdvancedModeClick(button, isDistractor) {
+function handleAdvancedModeClick(button) {
     const targetColor = button.style.color;
     const targetText = button.textContent;
     
-    // 在调试模式下，所有点击都视为正确
-    if (gameState.debugMode) {
-        handleCorrectAnswer(button);
+    if (targetColor === gameConfig.textMap[targetText]) {
+        // 错误：颜色=文字
+        handleWrongAnswer(button);
     } else {
-        if (isDistractor || targetColor === gameConfig.textMap[targetText]) {
-            // 错误：干扰项或颜色=文字
-            handleWrongAnswer(button);
-        } else {
-            // 正确：颜色≠文字
-            handleCorrectAnswer(button);
-        }
+        // 正确：颜色≠文字
+        handleCorrectAnswer(button);
     }
-    
-    // 检查是否需要进入下一关
-    checkLevelProgress();
-    
-    // 开始新一轮
-    startRound();
 }
 
 // 获取颜色名称
