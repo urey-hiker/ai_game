@@ -32,46 +32,34 @@
         <div id="rules-screen" class="screen">
             <h2>游戏规则</h2>
             <div class="rules-content">
-                <p><strong>核心规则：</strong>当按钮的<span class="highlight">字体颜色</span>与<span class="highlight">文字内容所指的颜色</span>不一致时，点击该按钮得分！</p>
-                
-                <div class="rule-examples">
-                    <div class="example correct">
-                        <span style="color: red;">黄</span>
-                        <p>正确！(红色的"黄"字)</p>
-                    </div>
-                    <div class="example incorrect">
-                        <span style="color: red;">红</span>
-                        <p>错误！(红色的"红"字)</p>
-                    </div>
-                </div>
-                
-                <p><strong>游戏玩法：</strong></p>
-                <ul>
-                    <li><strong>玩法1：</strong> 根据提示词点击对应的选项</li>
-                </ul>
+                <p><strong>核心规则：</strong>按照提示选择<span class="highlight">颜色和文字符合要求</span>的选项</p>
                 
                 <div class="gameplay-example">
                     <div class="prompt-example">请点击<span class="highlight">"对应"</span>的字：红色的 黄</div>
                     <div class="options-example">
-                        <button class="option-btn-example" style="color: blue;">红</button>
-                        <button class="option-btn-example" style="color: red;">黄</button>
-                        <button class="option-btn-example" style="color: green;">蓝</button>
-                        <button class="option-btn-example" style="color: yellow;">绿</button>
+                        <div class="option-with-label">
+                            <button class="option-btn-example" style="color: blue;">红</button>
+                            <div>❌</div>
+                        </div>
+                        <div class="option-with-label">
+                            <button class="option-btn-example" style="color: red;">黄</button>
+                            <div>✅</div>
+                        </div>
                     </div>
                 </div>
                 
-                <ul>
-                    <li><strong>玩法2：</strong> 自行判断字体颜色与文字内容是否一致</li>
-                </ul>
-                
                 <div class="gameplay-example">
+                    <div class="prompt-example">点击颜色与文字<span class="highlight">"不同"</span>的选项</div>
                     <div class="options-example">
-                        <button class="option-btn-example" style="color: red;">黄</button>
-                        <button class="option-btn-example" style="color: blue;">蓝</button>
-                        <button class="option-btn-example" style="color: green;">绿</button>
-                        <button class="option-btn-example" style="color: red;">红</button>
+                        <div class="option-with-label">
+                            <button class="option-btn-example" style="color: red;">黄</button>
+                            <div>✅</div>
+                        </div>
+                        <div class="option-with-label">
+                            <button class="option-btn-example" style="color: blue;">蓝</button>
+                            <div>❌</div>
+                        </div>
                     </div>
-                    <p class="example-caption">点击"红色的黄"和"蓝色的蓝"（颜色≠文字）</p>
                 </div>
                 
                 <p><strong>连击奖励：</strong></p>
@@ -79,12 +67,6 @@
                     <li><span class="combo-reward">5连击：</span> 3秒内分数×2</li>
                     <li><span class="combo-reward">10连击：</span> 下轮额外+2秒答题时间</li>
                     <li><span class="combo-reward">15连击：</span> 临时"错误免疫"（1次错误不计惩罚）</li>
-                </ul>
-            </div>
-            <button id="back-from-rules" class="btn btn-back">返回</button>
-        </div>
-                    <li><span class="achievement">速通达人：</span> 1分钟内通关3关</li>
-                    <li><span class="achievement">不屈战神：</span> 连续错误5次仍通关</li>
                 </ul>
             </div>
             <button id="back-from-rules" class="btn btn-back">返回</button>

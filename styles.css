@@ -165,6 +165,28 @@ body {
     border-radius: var(--border-radius);
     margin: 20px 0;
     max-width: 90%;
+    max-height: 60vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* 自定义滚动条样式 */
+.rules-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.rules-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+.rules-content::-webkit-scrollbar-thumb {
+    background: var(--secondary-color);
+    border-radius: 4px;
+}
+
+.rules-content::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
 }
 
 .highlight {
@@ -402,6 +424,28 @@ body {
     
     .options-container {
         grid-gap: 10px;
+    }
+    
+    /* 移动端规则内容样式 */
+    .rules-content {
+        max-height: 70vh;
+        padding: 15px;
+        margin: 15px 0;
+    }
+    
+    .gameplay-example {
+        margin: 15px 0;
+        padding: 12px;
+    }
+    
+    .option-btn-example {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+    
+    .prompt-example {
+        font-size: 1rem;
     }
 }
 
@@ -835,31 +879,33 @@ body {
 }
 /* 游戏玩法示例样式 */
 .gameplay-example {
-    background-color: rgba(255, 255, 255, 0.7);
-    border-radius: var(--border-radius);
+    margin: 20px 0;
     padding: 15px;
-    margin: 15px 0;
-    box-shadow: var(--shadow);
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    border: 2px solid var(--secondary-color);
 }
 
 .prompt-example {
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 10px 15px;
-    border-radius: var(--border-radius);
-    margin-bottom: 15px;
     font-size: 1.2rem;
-    font-family: 'Uranus', sans-serif; 
     font-weight: bold;
-    color: var(--dark-color);
+    margin-bottom: 15px;
     text-align: center;
+    color: var(--dark-color);
 }
 
 .options-example {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 10px;
+    display: flex;
     justify-content: center;
-    margin: 10px 0;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.option-with-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
 }
 
 .option-btn-example {
@@ -868,31 +914,36 @@ body {
     background: url('images/optionBtn.png') no-repeat center center;
     background-size: 100% 100%;
     border: none;
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: bold;
-    cursor: pointer;
+    cursor: default;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 auto;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    font-family: 'Uranus', sans-serif;
 }
 
-.example-caption {
-    text-align: center;
+.option-label {
     font-size: 0.9rem;
-    margin-top: 10px;
-    font-style: italic;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 15px;
+    text-align: center;
+    min-width: 60px;
 }
 
-@media (max-width: 500px) {
-    .option-btn-example {
-        width: 50px;
-        height: 50px;
-        font-size: 2rem;
-    }
-    
-    .prompt-example {
-        font-size: 1rem;
-        padding: 8px 12px;
-    }
+.option-label.correct {
+    background-color: rgba(78, 205, 196, 0.8);
+    color: white;
+}
+
+.option-label.wrong {
+    background-color: rgba(255, 107, 107, 0.8);
+    color: white;
+}
+
+.combo-reward {
+    color: var(--accent-color);
+    font-weight: bold;
 }
