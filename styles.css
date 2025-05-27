@@ -947,3 +947,32 @@ body {
     color: var(--accent-color);
     font-weight: bold;
 }
+/* 按照107 BPM的音乐节奏添加选项晃动动画 */
+@keyframes optionSway {
+    0% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
+    100% { transform: rotate(-2deg); }
+}
+
+.option-btn {
+    animation: optionSway 1.12s infinite ease-in-out;
+    transform-origin: center bottom;
+}
+
+/* 为了避免所有按钮同时晃动，给不同按钮添加不同的动画延迟 */
+.option-btn:nth-child(2n) {
+    animation-delay: 0.28s; /* 1/4拍延迟 */
+}
+
+.option-btn:nth-child(3n) {
+    animation-delay: 0.56s; /* 1/2拍延迟 */
+}
+
+.option-btn:nth-child(4n) {
+    animation-delay: 0.84s; /* 3/4拍延迟 */
+}
+
+/* 当鼠标悬停或点击时暂停动画，避免干扰用户操作 */
+.option-btn:hover, .option-btn:active {
+    animation-play-state: paused;
+}
