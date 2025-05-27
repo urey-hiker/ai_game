@@ -106,8 +106,11 @@ function initGame() {
     setupDebugMode();
     renderAchievements();
     
-    // 播放主菜单音乐
+    // 页面加载时立即播放主菜单音乐
     playHomeMusic();
+    
+    // 显示主菜单
+    showScreen('mainMenu');
 }
 
 // 设置调试模式
@@ -230,12 +233,9 @@ function showScreen(screenName) {
     if (screenName === 'game') {
         // 进入游戏屏幕，播放游戏背景音乐
         playBackgroundMusic();
-    } else if (screenName === 'mainMenu' && gameState.currentScreen !== 'mainMenu') {
-        // 返回主菜单，播放主菜单音乐
+    } else {
+        // 任何非游戏屏幕，播放主菜单音乐
         playHomeMusic();
-    } else if (gameState.currentScreen === 'game' && screenName !== 'game') {
-        // 从游戏屏幕切换到其他屏幕，停止背景音乐
-        stopBackgroundMusic();
     }
     
     // 隐藏所有屏幕
@@ -245,6 +245,10 @@ function showScreen(screenName) {
     
     // 显示指定屏幕
     elements.screens[screenName].classList.add('active');
+    
+    // 更新当前屏幕
+    gameState.currentScreen = screenName;
+}
     gameState.currentScreen = screenName;
 }
 
@@ -274,7 +278,7 @@ function startGame() {
     };
     
     // 设置初始时间
-    gameState.time = 300; // 初始时间设置为30秒
+    gameState.time = 30; // 初始时间设置为30秒
     
     // 更新UI
     updateGameUI();
@@ -1135,6 +1139,11 @@ function showScoreEffect(button, score) {
 }
 // 播放主菜单音乐
 function playHomeMusic() {
+    // 如果主菜单音乐已经在播放，则不需要重新开始
+    if (!elements.sounds.home.paused) {
+        return;
+    }
+    
     // 停止游戏背景音乐（如果正在播放）
     elements.sounds.bgm.pause();
     elements.sounds.bgm.currentTime = 0;
