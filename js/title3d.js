@@ -37,7 +37,7 @@ function init3DTitle() {
     // 创建相机
     const aspect = titleContainer.clientWidth / titleContainer.clientHeight;
     camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
-    camera.position.z = 20;
+    camera.position.z = 25; // 增加相机距离，确保心跳时R不会超出视野
     
     // 创建渲染器
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -50,9 +50,6 @@ function init3DTitle() {
     
     // 创建标题元素
     createTitleElements();
-    
-    // 添加事件监听器
-    addEventListeners();
     
     // 创建时钟用于动画
     clock = new THREE.Clock();
@@ -119,7 +116,7 @@ function createTitleElements() {
         });
         
         const rMaterial = new THREE.MeshPhongMaterial({
-            color: 0xff5722, // 高饱和橙红
+            color: 0xffa07a, // 低饱和橙红
             shininess: 100,
             specular: 0xffffff,
             emissive: 0xff3300,
@@ -133,50 +130,6 @@ function createTitleElements() {
         rMesh.position.set(5, 0, 2); // 增加z值使R在头文字上层
         scene.add(rMesh);
     });
-}
-
-// 添加事件监听器
-function addEventListeners() {
-    // 点击"R"触发效果
-    titleContainer.addEventListener('click', function(event) {
-        if (!rMesh) return;
-        
-        const rect = titleContainer.getBoundingClientRect();
-        const mouseX = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        const mouseY = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-        
-        const raycaster = new THREE.Raycaster();
-        raycaster.setFromCamera(new THREE.Vector2(mouseX, mouseY), camera);
-        
-        const intersects = raycaster.intersectObject(rMesh);
-        
-        if (intersects.length > 0) {
-            // 点击了R，触发闪烁效果
-            triggerRFlash();
-        }
-    });
-}
-
-// 触发R的闪烁效果
-function triggerRFlash() {
-    if (!rMesh || !rMesh.material) return;
-    
-    // 保存原始颜色和发光强度
-    const originalColor = rMesh.material.color.clone();
-    const originalEmissive = rMesh.material.emissive.clone();
-    const originalEmissiveIntensity = rMesh.material.emissiveIntensity;
-    
-    // 设置为明亮的白色
-    rMesh.material.color.set(0xffffff);
-    rMesh.material.emissive.set(0xffffff);
-    rMesh.material.emissiveIntensity = 1.0;
-    
-    // 0.3秒后恢复
-    setTimeout(() => {
-        rMesh.material.color.copy(originalColor);
-        rMesh.material.emissive.copy(originalEmissive);
-        rMesh.material.emissiveIntensity = originalEmissiveIntensity;
-    }, 300);
 }
 
 // 窗口大小变化时调整
@@ -211,34 +164,33 @@ function updateCamera(time) {
     camera.lookAt(scene.position);
 }
 
-// 更新R的呼吸和闪烁效果
+// 更新R的心跳效果
 function updateRMesh(time) {
     if (rMesh) {
-        // 呼吸缩放效果
-        const scale = 1 + Math.sin(time * 2) * 0.05;
-        rMesh.scale.set(scale, scale, scale);
+        // 生成心跳效果
+        // 使用正弦函数模拟心跳
+        const heartbeatSpeed = 1.2; // 心跳速度，较慢以确保不会超出视野
         
-        // 轻微旋转
-        rMesh.rotation.y = Math.sin(time * 0.5) * 0.1;
+        // 计算心跳曲线
+        const heartbeatPhase = ((time * heartbeatSpeed) % 1);
+        let heartbeatScale;
         
-        // 跳动的闪烁效果
-        const flashIntensity = 0.7 + Math.sin(time * 8) * 0.3; // 快速闪烁
-        const jumpEffect = 1 + Math.abs(Math.sin(time * 3)) * 0.1; // 跳动效果
-        
-        // 应用闪烁效果到材质
-        if (rMesh.material) {
-            rMesh.material.emissiveIntensity = flashIntensity;
-            rMesh.material.emissive = new THREE.Color(0xff3300);
-            
-            // 随机颜色变化
-            if (Math.random() > 0.95) {
-                const hue = Math.random() * 0.1 + 0.05; // 保持在橙红色范围内
-                rMesh.material.color.setHSL(hue, 1, 0.5);
-            }
+        if (heartbeatPhase < 0.1) {
+            // 快速上升阶段 (收缩期)
+            heartbeatScale = 1 + (heartbeatPhase / 0.1) * 0.08; // 减小最大缩放比例
+        } else if (heartbeatPhase < 0.2) {
+            // 快速下降阶段
+            heartbeatScale = 1.08 - ((heartbeatPhase - 0.1) / 0.1) * 0.05;
+        } else if (heartbeatPhase < 0.3) {
+            // 二次小幅上升 (舒张期)
+            heartbeatScale = 1.03 + ((heartbeatPhase - 0.2) / 0.1) * 0.02;
+        } else {
+            // 缓慢恢复到正常大小
+            heartbeatScale = 1.05 - ((heartbeatPhase - 0.3) / 0.7) * 0.05;
         }
         
-        // 应用跳动效果
-        rMesh.position.y = Math.sin(time * 3) * 0.2; // 轻微上下跳动
+        // 应用心跳缩放效果
+        rMesh.scale.set(heartbeatScale, heartbeatScale, heartbeatScale);
     }
 }
 
@@ -257,7 +209,7 @@ function animate() {
     // 更新相机
     updateCamera(time);
     
-    // 更新R的呼吸效果
+    // 更新R的心跳效果
     updateRMesh(time);
     
     // 渲染场景
