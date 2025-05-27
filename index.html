@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>字色快打！- 反应力游戏</title>
+    <title>头文字R - 反应力游戏</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Three.js库 -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
 </head>
 <body>
     <div class="game-container">
         <!-- 主菜单界面 -->
         <div id="main-menu" class="screen active">
-            <h1 class="game-title">字色快打！</h1>
+            <div id="title-container" class="game-title"></div>
             <div class="mascot">
                 <div class="mascot-image"></div>
             </div>
@@ -131,6 +133,7 @@
     <audio id="bgm-sound" src="sounds/bgm.mp3" preload="auto" loop></audio>
     <audio id="home-sound" src="sounds/homePage.mp3" preload="auto" loop></audio>
 
+    <script src="js/title3d.js"></script>
     <script src="game.js"></script>
 </body>
 </html>

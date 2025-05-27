@@ -106,6 +106,11 @@ function initGame() {
     setupDebugMode();
     renderAchievements();
 
+    // 初始化3D标题
+    if (typeof window.init3DTitle === 'function') {
+        window.init3DTitle();
+    }
+
     // 页面加载时立即播放主菜单音乐
     playHomeMusic();
 

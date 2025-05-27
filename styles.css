@@ -114,11 +114,10 @@ body {
 
 /* 主菜单样式 */
 .game-title {
-    font-size: 3rem;
-    color: var(--primary-color);
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    height: 150px;
     margin-bottom: 20px;
-    animation: pulse 2s infinite;
+    position: relative;
 }
 
 @keyframes pulse {
@@ -398,7 +397,7 @@ body {
     }
     
     .game-title {
-        font-size: 2.5rem;
+        height: 100px;
     }
     
     .options-container {
@@ -641,4 +640,63 @@ body {
     color: var(--primary-color);
     font-size: 1.3rem;
     font-family: 'Uranus', sans-serif;
+}
+/* 3D标题样式 */
+#title-container {
+    width: 100%;
+    height: 150px;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+#title-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+}
+
+/* 降级2D标题样式 */
+.fallback-title {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Uranus', sans-serif;
+}
+
+.fallback-title .head-text {
+    color: #444;
+    font-size: 2.5rem;
+}
+
+.fallback-title .r-text {
+    color: #ff5722;
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin: 0 5px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.fallback-title .reaction-text {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 2rem;
+}
+
+@media (max-width: 500px) {
+    #title-container {
+        height: 100px;
+    }
+    
+    .fallback-title .head-text {
+        font-size: 1.8rem;
+    }
+    
+    .fallback-title .r-text {
+        font-size: 2.5rem;
+    }
+    
+    .fallback-title .reaction-text {
+        font-size: 1.5rem;
+    }
 }
