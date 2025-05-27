@@ -802,39 +802,20 @@ function increaseDifficulty() {
     // 根据当前关卡增加难度
     switch(gameState.level) {
         case 2:
-            // 第2关：增加蓝色
-            dynamicSettings.currentColors.push('blue');
-            dynamicSettings.currentTexts.push('蓝');
-            dynamicSettings.optionsCount = 5;
-            dynamicSettings.nextLevelThreshold = 200;
-            break;
-        case 3:
-            // 第3关：增加绿色
-            dynamicSettings.currentColors.push('green');
-            dynamicSettings.currentTexts.push('绿');
-            dynamicSettings.optionsCount = 5;
+            // 第2关：增加所有颜色，6个选项
+            dynamicSettings.currentColors = ['red', 'yellow', 'blue', 'green', 'purple', 'pink'];
+            dynamicSettings.currentTexts = ['红', '黄', '蓝', '绿', '紫', '粉'];
+            dynamicSettings.optionsCount = 6;
             dynamicSettings.nextLevelThreshold = 300;
             break;
-        case 4:
-            // 第4关：增加紫色
-            dynamicSettings.currentColors.push('purple');
-            dynamicSettings.currentTexts.push('紫');
-            dynamicSettings.optionsCount = 6;
-            dynamicSettings.nextLevelThreshold = 400;
-            break;
-        case 5:
-            // 第5关：增加粉色
-            dynamicSettings.currentColors.push('pink');
-            dynamicSettings.currentTexts.push('粉');
-            dynamicSettings.optionsCount = 6;
+        case 3:
+            // 第3关：9个选项
+            dynamicSettings.optionsCount = 9;
             dynamicSettings.nextLevelThreshold = 500;
             break;
         default:
-            // 更高关卡：增加选项数量
-            if (dynamicSettings.optionsCount < 8) {
-                dynamicSettings.optionsCount++;
-            }
-            dynamicSettings.nextLevelThreshold += 100;
+            // 已经是最高关卡，只增加分数阈值
+            dynamicSettings.nextLevelThreshold += 200;
             break;
     }
 }
@@ -1038,17 +1019,11 @@ function adjustOptionsContainerColumns(optionsCount) {
         case 4:
             columns = 2; // 2x2布局
             break;
-        case 5:
-            columns = 3; // 3-2布局（3列，第一行3个，第二行2个）
-            break;
         case 6:
             columns = 3; // 3x2布局
             break;
-        case 7:
-            columns = 4; // 4-3布局
-            break;
-        case 8:
-            columns = 4; // 4x2布局
+        case 9:
+            columns = 3; // 3x3布局
             break;
         default:
             columns = Math.ceil(Math.sqrt(optionsCount)); // 默认尽量接近正方形布局
