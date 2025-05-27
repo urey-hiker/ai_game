@@ -119,7 +119,7 @@ function createTitleElements() {
         // 创建3D的"R"
         const rGeometry = new THREE.TextGeometry('R', {
             font: font,
-            size: 5,
+            size: 7, // 增大字体大小
             height: 5, // 厚度≥5单位
             curveSegments: 12,
             bevelEnabled: true,
@@ -137,7 +137,8 @@ function createTitleElements() {
         rMesh = new THREE.Mesh(rGeometry, rMaterial);
         rGeometry.computeBoundingBox();
         const rWidth = rGeometry.boundingBox.max.x - rGeometry.boundingBox.min.x;
-        rMesh.position.set(-rWidth/2, 0, 0);
+        // 将R放在中心位置
+        rMesh.position.set(0, 0, 0);
         scene.add(rMesh);
     });
 }
