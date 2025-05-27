@@ -609,7 +609,7 @@ function handleCorrectAnswer(button) {
     gameState.score += scoreToAdd;
     
     // 显示得分特效
-    showScoreEffect(button, scoreToAdd);
+    showScoreEffect(button, `+${scoreToAdd}`);
     
     // 增加连击
     gameState.combo++;
@@ -648,6 +648,9 @@ function handleWrongAnswer(button) {
     
     // 显示错误提示
     showFeedbackMessage('错误！', 'wrong');
+    
+    // 显示错误特效
+    showScoreEffect(button, '❌');
     
     // 高亮显示错误选项
     button.classList.add('wrong');
@@ -1047,7 +1050,13 @@ function showScoreEffect(button, score) {
     // 创建得分特效元素
     const scoreEffect = document.createElement('div');
     scoreEffect.className = 'score-effect';
-    scoreEffect.textContent = `+${score}`;
+    
+    // 如果是错误特效，添加wrong类
+    if (score === '❌') {
+        scoreEffect.classList.add('wrong');
+    }
+    
+    scoreEffect.textContent = score;
     
     // 计算初始位置（按钮中心）
     const buttonRect = button.getBoundingClientRect();

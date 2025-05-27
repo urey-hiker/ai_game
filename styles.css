@@ -610,3 +610,8 @@ body {
     opacity: 1;
     transform: translateY(0);
 }
+
+/* 错误特效样式 */
+.score-effect.wrong {
+    color: var(--primary-color);
+}
