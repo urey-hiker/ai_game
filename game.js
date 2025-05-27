@@ -94,7 +94,8 @@ const elements = {
         combo: document.getElementById('combo-sound'),
         levelUp: document.getElementById('level-up-sound'),
         win: document.getElementById('win-sound'),
-        bgm: document.getElementById('bgm-sound')
+        bgm: document.getElementById('bgm-sound'),
+        home: document.getElementById('home-sound')
     }
 };
 
@@ -104,6 +105,9 @@ function initGame() {
     setupEventListeners();
     setupDebugMode();
     renderAchievements();
+    
+    // 播放主菜单音乐
+    playHomeMusic();
 }
 
 // 设置调试模式
@@ -222,8 +226,15 @@ function showScreen(screenName) {
         gameState.timerInterval = null;
     }
     
-    // 如果从游戏屏幕切换到其他屏幕，停止背景音乐
-    if (gameState.currentScreen === 'game' && screenName !== 'game') {
+    // 处理音乐切换
+    if (screenName === 'game') {
+        // 进入游戏屏幕，播放游戏背景音乐
+        playBackgroundMusic();
+    } else if (screenName === 'mainMenu' && gameState.currentScreen !== 'mainMenu') {
+        // 返回主菜单，播放主菜单音乐
+        playHomeMusic();
+    } else if (gameState.currentScreen === 'game' && screenName !== 'game') {
+        // 从游戏屏幕切换到其他屏幕，停止背景音乐
         stopBackgroundMusic();
     }
     
@@ -284,6 +295,10 @@ function startGame() {
 
 // 播放背景音乐
 function playBackgroundMusic() {
+    // 停止主菜单音乐
+    elements.sounds.home.pause();
+    elements.sounds.home.currentTime = 0;
+    
     // 重置音乐到开头
     elements.sounds.bgm.currentTime = 0;
     // 设置音量
@@ -1117,4 +1132,19 @@ function showScoreEffect(button, score) {
     
     // 开始动画
     animationId = requestAnimationFrame(animate);
+}
+// 播放主菜单音乐
+function playHomeMusic() {
+    // 停止游戏背景音乐（如果正在播放）
+    elements.sounds.bgm.pause();
+    elements.sounds.bgm.currentTime = 0;
+    
+    // 重置主菜单音乐到开头
+    elements.sounds.home.currentTime = 0;
+    // 设置音量
+    elements.sounds.home.volume = 0.4;
+    // 播放音乐
+    elements.sounds.home.play().catch(error => {
+        console.log('主菜单音乐播放失败:', error);
+    });
 }
