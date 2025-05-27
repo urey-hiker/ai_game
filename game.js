@@ -46,7 +46,6 @@ const gameConfig = {
 // 游戏状态
 const gameState = {
     currentScreen: 'main-menu',
-    difficulty: 'easy',
     score: 0,
     combo: 0,
     maxCombo: 0,
@@ -58,13 +57,18 @@ const gameState = {
     doubleScoreActive: false,
     immunityActive: false,
     unlockedAchievements: [],
-    unlockedDifficulties: ['easy'],
     currentCorrectOption: null, // 用于基础难度下保存当前正确选项
     debugMode: false, // 调试模式开关
     totalClicks: 0, // 总点击次数
     correctClicks: 0, // 正确点击次数
     clickTimes: [], // 记录每次正确点击的时间
-    lastClickTime: 0 // 上次点击的时间戳
+    lastClickTime: 0, // 上次点击的时间戳
+    dynamicDifficulty: { // 动态难度设置
+        currentColors: ['red', 'yellow'], // 当前使用的颜色
+        currentTexts: ['红', '黄'], // 当前使用的文字
+        optionsCount: 4, // 当前选项数量
+        nextLevelThreshold: 100 // 下一级难度的分数阈值
+    }
 };
 
 // DOM元素引用
@@ -130,7 +134,6 @@ function initGame() {
     loadSavedData();
     setupEventListeners();
     setupDebugMode();
-    updateDifficultyButtons();
     renderAchievements();
 }
 
@@ -174,7 +177,6 @@ function loadSavedData() {
     const savedData = localStorage.getItem('colorWordGame');
     if (savedData) {
         const data = JSON.parse(savedData);
-        gameState.unlockedDifficulties = data.unlockedDifficulties || ['easy'];
         gameState.unlockedAchievements = data.unlockedAchievements || [];
         gameState.maxCombo = data.maxCombo || 0;
         gameState.clearedLevels = data.clearedLevels || 0;
@@ -184,7 +186,6 @@ function loadSavedData() {
 // 保存游戏数据
 function saveGameData() {
     const dataToSave = {
-        unlockedDifficulties: gameState.unlockedDifficulties,
         unlockedAchievements: gameState.unlockedAchievements,
         maxCombo: gameState.maxCombo,
         clearedLevels: gameState.clearedLevels
@@ -197,7 +198,8 @@ function setupEventListeners() {
     // 主菜单按钮
     elements.buttons.startGame.addEventListener('click', () => {
         elements.sounds.click.play();
-        showScreen('difficulty');
+        // 直接开始游戏，不再显示难度选择界面
+        startGame();
     });
     elements.buttons.showRules.addEventListener('click', () => {
         elements.sounds.click.play();
@@ -217,36 +219,15 @@ function setupEventListeners() {
         elements.sounds.click.play();
         showScreen('mainMenu');
     });
-    elements.buttons.backFromDifficulty.addEventListener('click', () => {
         elements.sounds.click.play();
         showScreen('mainMenu');
-    });
-    
-    // 难度选择按钮
-    elements.buttons.difficultyOptions.easy.addEventListener('click', () => {
-        elements.sounds.click.play();
-        gameState.difficulty = 'easy';
-        startGame();
-    });
-    elements.buttons.difficultyOptions.medium.addEventListener('click', () => {
-        if (!elements.buttons.difficultyOptions.medium.disabled) {
-            elements.sounds.click.play();
-            gameState.difficulty = 'medium';
-            startGame();
-        }
-    });
-    elements.buttons.difficultyOptions.hard.addEventListener('click', () => {
-        if (!elements.buttons.difficultyOptions.hard.disabled) {
-            elements.sounds.click.play();
-            gameState.difficulty = 'hard';
-            startGame();
-        }
     });
     
     // 结果界面按钮
     elements.buttons.playAgain.addEventListener('click', () => {
         elements.sounds.click.play();
-        showScreen('difficulty');
+        // 直接开始游戏，不再显示难度选择界面
+        startGame();
     });
     elements.buttons.backToMenu.addEventListener('click', () => {
         elements.sounds.click.play();
@@ -304,9 +285,16 @@ function startGame() {
     gameState.clickTimes = [];
     gameState.lastClickTime = 0;
     
+    // 重置动态难度
+    gameState.dynamicDifficulty = {
+        currentColors: ['red', 'yellow'],
+        currentTexts: ['红', '黄'],
+        optionsCount: 4,
+        nextLevelThreshold: 100
+    };
+    
     // 设置初始时间
-    const difficultySettings = gameConfig.difficulties[gameState.difficulty];
-    gameState.time = difficultySettings.timeLimit;
+    gameState.time = 30; // 初始时间设置为30秒
     
     // 更新UI
     updateGameUI();
@@ -370,19 +358,145 @@ function startRound() {
     // 记录本轮开始时间
     gameState.lastClickTime = Date.now();
     
-    // 获取当前难度设置
-    const difficultySettings = gameConfig.difficulties[gameState.difficulty];
-    
-    if (gameState.difficulty === 'easy') {
-        // 基础难度：生成提示词和一个正确选项，其余为错误选项
-        generateEasyModeRound(difficultySettings);
-    } else {
-        // 中级和高级难度：随机生成选项
-        generateNormalModeRound(difficultySettings);
-    }
+    // 使用动态难度生成游戏内容
+    generateDynamicRound();
     
     // 开始计时器
     startTimer();
+}
+
+// 生成动态难度的一轮游戏
+function generateDynamicRound() {
+    // 根据当前级别生成选项
+    const dynamicSettings = gameState.dynamicDifficulty;
+    
+    // 如果是第一关，使用基础模式
+    if (gameState.level === 1) {
+        generateBasicRound();
+    } else {
+        // 否则使用高级模式
+        generateAdvancedRound();
+    }
+}
+
+// 生成基础模式的一轮游戏
+function generateBasicRound() {
+    const dynamicSettings = gameState.dynamicDifficulty;
+    
+    // 1. 随机选择一个颜色和一个不同的文字
+    const colorIndex = Math.floor(Math.random() * dynamicSettings.currentColors.length);
+    let textIndex;
+    do {
+        textIndex = Math.floor(Math.random() * dynamicSettings.currentTexts.length);
+    } while (gameConfig.textMap[dynamicSettings.currentTexts[textIndex]] === dynamicSettings.currentColors[colorIndex]);
+    
+    const targetColor = dynamicSettings.currentColors[colorIndex];
+    const targetText = dynamicSettings.currentTexts[textIndex];
+    
+    // 2. 创建提示词
+    const prompt = document.createElement('div');
+    prompt.textContent = `请点击${getColorName(targetColor)}的"${targetText}"字`;
+    elements.game.promptContainer.appendChild(prompt);
+    
+    // 3. 创建正确选项
+    const correctOption = createOptionButton(targetColor, targetText, false);
+    
+    // 4. 创建错误选项
+    const wrongOptions = [];
+    for (let i = 0; i < dynamicSettings.optionsCount - 1; i++) {
+        let wrongColor, wrongText;
+        
+        // 确保错误选项与正确选项不同
+        do {
+            // 生成颜色相同但文字不同的选项，或文字相同但颜色不同的选项
+            if (Math.random() < 0.5) {
+                wrongColor = targetColor;
+                do {
+                    wrongText = dynamicSettings.currentTexts[Math.floor(Math.random() * dynamicSettings.currentTexts.length)];
+                } while (wrongText === targetText);
+            } else {
+                do {
+                    wrongColor = dynamicSettings.currentColors[Math.floor(Math.random() * dynamicSettings.currentColors.length)];
+                } while (wrongColor === targetColor);
+                wrongText = targetText;
+            }
+            
+            // 确保这个错误选项不符合"颜色≠文字"的正确条件
+        } while (wrongColor !== gameConfig.textMap[wrongText]);
+        
+        wrongOptions.push(createOptionButton(wrongColor, wrongText, false));
+    }
+    
+    // 5. 随机排列所有选项
+    const allOptions = [correctOption, ...wrongOptions];
+    shuffleArray(allOptions);
+    
+    // 6. 添加到容器
+    allOptions.forEach(option => {
+        elements.game.optionsContainer.appendChild(option);
+    });
+    
+    // 保存当前正确选项信息，用于判断
+    gameState.currentCorrectOption = {
+        color: targetColor,
+        text: targetText
+    };
+}
+
+// 生成高级模式的一轮游戏
+function generateAdvancedRound() {
+    const dynamicSettings = gameState.dynamicDifficulty;
+    
+    // 清空选项容器
+    elements.game.optionsContainer.innerHTML = '';
+    
+    // 创建提示词
+    const prompt = document.createElement('div');
+    prompt.textContent = `点击颜色与文字不一致的选项`;
+    elements.game.promptContainer.appendChild(prompt);
+    
+    // 生成选项
+    const options = [];
+    let hasCorrectOption = false;
+    
+    // 确保至少有一个正确选项（颜色≠文字）
+    for (let i = 0; i < dynamicSettings.optionsCount; i++) {
+        let color, text, isDistractor = false;
+        
+        // 最后一个选项，如果还没有正确选项，强制生成一个
+        if (i === dynamicSettings.optionsCount - 1 && !hasCorrectOption) {
+            // 强制生成一个正确选项（颜色≠文字）
+            do {
+                color = dynamicSettings.currentColors[Math.floor(Math.random() * dynamicSettings.currentColors.length)];
+                text = dynamicSettings.currentTexts[Math.floor(Math.random() * dynamicSettings.currentTexts.length)];
+            } while (color === gameConfig.textMap[text]);
+            hasCorrectOption = true;
+        } else {
+            // 随机生成选项，有50%概率是正确的（颜色≠文字）
+            if (Math.random() < 0.5 && !hasCorrectOption) {
+                // 生成正确选项（颜色≠文字）
+                do {
+                    color = dynamicSettings.currentColors[Math.floor(Math.random() * dynamicSettings.currentColors.length)];
+                    text = dynamicSettings.currentTexts[Math.floor(Math.random() * dynamicSettings.currentTexts.length)];
+                } while (color === gameConfig.textMap[text]);
+                hasCorrectOption = true;
+            } else {
+                // 生成错误选项（颜色=文字）
+                text = dynamicSettings.currentTexts[Math.floor(Math.random() * dynamicSettings.currentTexts.length)];
+                color = gameConfig.textMap[text];
+            }
+        }
+        
+        options.push(createOptionButton(color, text, isDistractor));
+    }
+    
+    // 随机排列所有选项
+    shuffleArray(options);
+    
+    // 添加到容器
+    options.forEach(option => {
+        elements.game.optionsContainer.appendChild(option);
+    });
 }
 
 // 生成基础难度的一轮游戏
@@ -461,18 +575,18 @@ function createOptionButton(color, text, isDistractor) {
     
     // 添加点击事件
     button.addEventListener('click', () => {
-        if (gameState.difficulty === 'easy') {
-            handleEasyModeClick(button);
+        if (gameState.level === 1) {
+            handleBasicModeClick(button);
         } else {
-            handleNormalModeClick(button, isDistractor);
+            handleAdvancedModeClick(button, isDistractor);
         }
     });
     
     return button;
 }
 
-// 处理基础难度的点击
-function handleEasyModeClick(button) {
+// 处理基础模式的点击
+function handleBasicModeClick(button) {
     const targetColor = button.style.color;
     const targetText = button.textContent;
     
@@ -498,8 +612,8 @@ function handleEasyModeClick(button) {
     startRound();
 }
 
-// 处理普通模式的点击
-function handleNormalModeClick(button, isDistractor) {
+// 处理高级模式的点击
+function handleAdvancedModeClick(button, isDistractor) {
     const targetColor = button.style.color;
     const targetText = button.textContent;
     
@@ -557,6 +671,7 @@ function handleCorrectAnswer(button) {
     gameState.clickTimes.push(reactionTime);
     
     // 播放正确音效
+    elements.sounds.correct.currentTime = 0;
     elements.sounds.correct.play();
     
     // 显示正确提示
@@ -605,6 +720,7 @@ function handleWrongAnswer(button) {
     }
     
     // 播放错误音效
+    elements.sounds.wrong.currentTime = 0;
     elements.sounds.wrong.play();
     
     // 显示错误提示
@@ -741,8 +857,8 @@ function startTimer() {
 
 // 检查关卡进度
 function checkLevelProgress() {
-    const difficultySettings = gameConfig.difficulties[gameState.difficulty];
-    const targetScore = difficultySettings.targetScore * gameState.level;
+    const dynamicSettings = gameState.dynamicDifficulty;
+    const targetScore = dynamicSettings.nextLevelThreshold;
     
     if (gameState.score >= targetScore) {
         // 升级
@@ -753,13 +869,60 @@ function checkLevelProgress() {
         elements.sounds.levelUp.play();
         
         // 增加时间奖励
-        gameState.time += 3;
+        gameState.time += 5;
+        
+        // 增加难度
+        increaseDifficulty();
         
         // 显示升级效果
         showBonusEffect(`升级到第${gameState.level}关！`);
         
         // 更新UI
         updateGameUI();
+    }
+}
+
+// 增加游戏难度
+function increaseDifficulty() {
+    const dynamicSettings = gameState.dynamicDifficulty;
+    
+    // 根据当前关卡增加难度
+    switch(gameState.level) {
+        case 2:
+            // 第2关：增加蓝色
+            dynamicSettings.currentColors.push('blue');
+            dynamicSettings.currentTexts.push('蓝');
+            dynamicSettings.optionsCount = 5;
+            dynamicSettings.nextLevelThreshold = 200;
+            break;
+        case 3:
+            // 第3关：增加绿色
+            dynamicSettings.currentColors.push('green');
+            dynamicSettings.currentTexts.push('绿');
+            dynamicSettings.optionsCount = 5;
+            dynamicSettings.nextLevelThreshold = 300;
+            break;
+        case 4:
+            // 第4关：增加紫色
+            dynamicSettings.currentColors.push('purple');
+            dynamicSettings.currentTexts.push('紫');
+            dynamicSettings.optionsCount = 6;
+            dynamicSettings.nextLevelThreshold = 400;
+            break;
+        case 5:
+            // 第5关：增加粉色
+            dynamicSettings.currentColors.push('pink');
+            dynamicSettings.currentTexts.push('粉');
+            dynamicSettings.optionsCount = 6;
+            dynamicSettings.nextLevelThreshold = 500;
+            break;
+        default:
+            // 更高关卡：增加选项数量
+            if (dynamicSettings.optionsCount < 8) {
+                dynamicSettings.optionsCount++;
+            }
+            dynamicSettings.nextLevelThreshold += 100;
+            break;
     }
 }
 

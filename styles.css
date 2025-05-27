@@ -251,7 +251,7 @@ body {
     border-radius: 15px;
     border: 3px solid var(--dark-color);
     background-color: white;
-    font-size: 2.2rem;
+    font-size: 3rem;
     font-weight: bold;
     cursor: pointer;
     transition: transform 0.2s;
@@ -261,11 +261,6 @@ body {
     box-shadow: var(--shadow);
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* 添加文字阴影 */
     font-family: 'MaShanZheng', sans-serif; /* 使用马善政字体 */
-}
-
-/* 特别为黄色文字增强阴影 */
-.option-btn[style*="color: yellow"] {
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 .option-btn:hover {
@@ -420,7 +415,7 @@ body {
 /* 奖励效果 */
 .bonus-effect {
     position: absolute;
-    top: 50%;
+    top: 30%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 2rem;
@@ -442,7 +437,7 @@ body {
 /* 正确/错误提示样式 */
 .feedback-message {
     position: absolute;
-    top: 50%;
+    top: 20%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 3rem;
@@ -560,30 +555,7 @@ body {
     transform: translateY(0);
     pointer-events: auto; /* 启用点击事件 */
 }
-/* 特定颜色文字的增强阴影 */
-.option-btn[style*="color: red"] {
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
-}
 
-.option-btn[style*="color: yellow"] {
-    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
-}
-
-.option-btn[style*="color: blue"] {
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
-}
-
-.option-btn[style*="color: green"] {
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
-}
-
-.option-btn[style*="color: purple"] {
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
-}
-
-.option-btn[style*="color: pink"] {
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-}
 .result-stats {
     background-color: rgba(255, 255, 255, 0.8);
     border-radius: 10px;
