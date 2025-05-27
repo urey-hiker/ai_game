@@ -602,7 +602,7 @@ function handleCorrectAnswer(button) {
     elements.sounds.correct.play();
 
     // 显示正确提示
-    showFeedbackMessage('正确！', 'correct');
+    // showFeedbackMessage('正确！', 'correct');
 
     // 高亮显示正确选项
     button.classList.add('correct');
@@ -654,7 +654,7 @@ function handleWrongAnswer(button) {
     elements.sounds.wrong.play();
 
     // 显示错误提示
-    showFeedbackMessage('错误！', 'wrong');
+    // showFeedbackMessage('错误！', 'wrong');
 
     // 显示错误特效
     showScoreEffect(button, '❌');
@@ -1054,6 +1054,7 @@ function adjustOptionsContainerColumns(optionsCount) {
     // 设置列数
     container.style.gridTemplateColumns = `repeat(${columns}, 80px)`;
 }
+
 // 显示得分特效
 function showScoreEffect(button, score) {
     // 创建得分特效元素
@@ -1083,8 +1084,8 @@ function showScoreEffect(button, score) {
         x: 0,
         y: 0,
         vx: (Math.random() - 0.5) * 10, // 随机水平速度
-        vy: -Math.random() * 15 - 10,   // 随机向上的初始速度
-        gravity: 0.8,                   // 重力加速度
+        vy: -Math.random() * 15 - 5,   // 随机向上的初始速度
+        gravity: score === '❌' ? 0.8 : 0.5,                   // 重力加速度
         friction: 0.99                  // 摩擦力
     };
 
