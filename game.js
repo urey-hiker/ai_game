@@ -219,9 +219,9 @@ function setupEventListeners() {
         elements.sounds.click.play();
         showScreen('mainMenu');
     });
-        elements.sounds.click.play();
-        showScreen('mainMenu');
-    });
+    //     elements.sounds.click.play();
+    //     showScreen('mainMenu');
+    // });
     
     // 结果界面按钮
     elements.buttons.playAgain.addEventListener('click', () => {
@@ -432,6 +432,12 @@ function generateBasicRound() {
     shuffleArray(allOptions);
     
     // 6. 添加到容器
+    elements.game.optionsContainer.innerHTML = ''; // 清空容器
+    
+    // 根据选项数量调整容器的列数
+    adjustOptionsContainerColumns(dynamicSettings.optionsCount);
+    
+    // 添加选项到容器
     allOptions.forEach(option => {
         elements.game.optionsContainer.appendChild(option);
     });
@@ -492,6 +498,9 @@ function generateAdvancedRound() {
     
     // 随机排列所有选项
     shuffleArray(options);
+    
+    // 根据选项数量调整容器的列数
+    adjustOptionsContainerColumns(dynamicSettings.optionsCount);
     
     // 添加到容器
     options.forEach(option => {
@@ -1131,3 +1140,32 @@ function shareResult() {
 
 // 初始化游戏
 document.addEventListener('DOMContentLoaded', initGame);
+// 根据选项数量调整容器的列数
+function adjustOptionsContainerColumns(optionsCount) {
+    const container = elements.game.optionsContainer;
+    
+    // 根据选项数量设置合适的列数
+    let columns;
+    switch(optionsCount) {
+        case 4:
+            columns = 2; // 2x2布局
+            break;
+        case 5:
+            columns = 3; // 3-2布局（3列，第一行3个，第二行2个）
+            break;
+        case 6:
+            columns = 3; // 3x2布局
+            break;
+        case 7:
+            columns = 4; // 4-3布局
+            break;
+        case 8:
+            columns = 4; // 4x2布局
+            break;
+        default:
+            columns = Math.ceil(Math.sqrt(optionsCount)); // 默认尽量接近正方形布局
+    }
+    
+    // 设置列数
+    container.style.gridTemplateColumns = `repeat(${columns}, 80px)`;
+}
