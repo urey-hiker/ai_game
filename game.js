@@ -45,7 +45,8 @@ window.gameState = {
         optionsCount: 4, // 当前选项数量
         nextLevelThreshold: 70 // 下一级难度的分数阈值
     },
-    coverTimer: null // 遮盖定时器
+    coverTimer: null, // 遮盖定时器
+    coverInterval: null // 遮盖间隔定时器
 };
 
 // DOM元素引用
@@ -391,26 +392,28 @@ function startRound() {
         clearTimeout(gameState.coverTimer);
         gameState.coverTimer = null;
     }
+    if (gameState.coverInterval) {
+        clearInterval(gameState.coverInterval);
+        gameState.coverInterval = null;
+    }
+    // 移除所有旧遮盖
+    document.querySelectorAll('.cover-flip-effect').forEach(e => e.remove());
+    document.querySelectorAll('.option-btn.covered').forEach(e => e.classList.remove('covered'));
 
     // 使用动态难度生成游戏内容
     generateDynamicRound();
 
-    // 关卡>=10时，计算本轮应加的遮盖物数
+    // 关卡>=10时，2秒后开始间隔1秒切换遮盖目标
     if (gameState.level >= 10) {
-        const coverCount = Math.min(9, Math.floor((gameState.level - 10) / 5) + 1);
-        let covered = 0;
-        function scheduleNextCover() {
-            if (covered < coverCount) {
-                coverMultipleRandomButtons(1); // 每次只多盖一个
-                covered++;
-                if (covered < coverCount) {
-                    gameState.coverTimer = setTimeout(scheduleNextCover, 1000);
-                } else {
-                    gameState.coverTimer = null;
-                }
-            }
-        }
-        gameState.coverTimer = setTimeout(scheduleNextCover, 2000);
+        const coverCount = Math.min(8, Math.floor((gameState.level - 10) / 5) + 1);
+        gameState.coverTimer = setTimeout(() => {
+            // 首次遮盖
+            switchCoverTargets(coverCount);
+            // 之后每隔1秒切换
+            gameState.coverInterval = setInterval(() => {
+                switchCoverTargets(coverCount);
+            }, 1000);
+        }, 1000);
     }
 
     // 开始计时器
@@ -593,11 +596,17 @@ function createOptionButton(color, text, isDistractor, mode) {
 
 // 处理按钮点击
 function handleButtonClick(button) {
-    // 玩家点击时清除遮盖定时器
+    // 玩家点击时清除遮盖定时器和interval，并移除所有遮盖
     if (gameState.coverTimer) {
         clearTimeout(gameState.coverTimer);
         gameState.coverTimer = null;
     }
+    if (gameState.coverInterval) {
+        clearInterval(gameState.coverInterval);
+        gameState.coverInterval = null;
+    }
+    document.querySelectorAll('.cover-flip-effect').forEach(e => e.remove());
+    document.querySelectorAll('.option-btn.covered').forEach(e => e.classList.remove('covered'));
     const mode = gameState.currentCorrectOption.mode;
     
     // 禁用所有选项按钮，防止重复点击
@@ -1325,3 +1334,37 @@ function showFastReactionEffect(button) {
     }, 1500);
 }
 
+
+// 切换遮盖目标
+function switchCoverTargets(count) {
+    // 移除所有旧遮盖
+    document.querySelectorAll('.cover-flip-effect').forEach(e => e.remove());
+    document.querySelectorAll('.option-btn.covered').forEach(e => e.classList.remove('covered'));
+    const buttons = Array.from(document.querySelectorAll('.option-btn'));
+    if (buttons.length === 0) return;
+    // 不允许重复遮盖同一个按钮
+    const shuffled = buttons.sort(() => Math.random() - 0.5);
+    for (let i = 0; i < Math.min(count, shuffled.length); i++) {
+        const btn = shuffled[i];
+        const cover = document.createElement('div');
+        cover.className = 'cover-flip-effect';
+        cover.innerHTML = '?';
+        cover.style.position = 'absolute';
+        cover.style.left = 0;
+        cover.style.top = 0;
+        cover.style.width = '100%';
+        cover.style.height = '100%';
+        cover.style.display = 'flex';
+        cover.style.alignItems = 'center';
+        cover.style.justifyContent = 'center';
+        cover.style.fontSize = '2em';
+        cover.style.background = '#000';
+        cover.style.color = '#fff';
+        cover.style.borderRadius = '8px';
+        cover.style.pointerEvents = 'none';
+        cover.style.zIndex = 999;
+        btn.style.position = 'relative';
+        btn.classList.add('covered');
+        btn.appendChild(cover);
+    }
+}
