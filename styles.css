@@ -105,7 +105,7 @@ body {
     justify-content: center;
     padding: 20px;
     text-align: center;
-    background-color: rgba(255, 255, 255, 0.85);
+    background-color: rgba(255, 255, 255, 0.65)
 }
 
 .screen.active {
@@ -1121,4 +1121,26 @@ body {
         opacity: 0;
         transform: translateX(-50%) translateY(-60px) scale(0.8);
     }
+}
+/* 选项按钮出现动画 */
+@keyframes optionAppear {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.option-btn.appearing {
+  animation: optionAppear 0.5s forwards;
+  transform-origin: center center;
 }

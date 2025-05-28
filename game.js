@@ -536,10 +536,23 @@ function generateAdvancedRound() {
 // 创建选项按钮
 function createOptionButton(color, text, isDistractor, mode) {
     const button = document.createElement('button');
-    button.className = 'option-btn';
+    button.className = 'option-btn appearing';
     button.style.color = color;
     button.textContent = text;
     button.dataset.mode = mode; // 添加模式标记
+    
+    // 随机分配晃动动画类型
+    const swayClass = Math.random() < 0.5 ? 'optionSwayBounce1' : 'optionSwayBounce2';
+    button.dataset.swayClass = swayClass;
+    
+    // 添加动画结束事件监听器
+    button.addEventListener('animationend', function(e) {
+        if (e.animationName === 'optionAppear') {
+            button.classList.remove('appearing');
+            // 应用晃动效果
+            button.classList.add(button.dataset.swayClass);
+        }
+    });
 
     // 添加点击事件
     button.addEventListener('click', () => {
@@ -552,6 +565,13 @@ function createOptionButton(color, text, isDistractor, mode) {
 // 处理按钮点击
 function handleButtonClick(button) {
     const mode = gameState.currentCorrectOption.mode;
+    
+    // 禁用所有选项按钮，防止重复点击
+    const allOptions = document.querySelectorAll('.option-btn');
+    allOptions.forEach(option => {
+        option.disabled = true;
+        option.style.pointerEvents = 'none';
+    });
 
     // 在调试模式下，所有点击都视为正确
     if (gameState.debugMode) {
@@ -1136,7 +1156,7 @@ function showScoreEffect(button, score) {
         y: 0,
         vx: (Math.random() - 0.5) * 10, // 随机水平速度
         vy: -Math.random() * 15 - 5,   // 随机向上的初始速度
-        gravity: score === '❌' ? 0.8 : 0.5,                   // 重力加速度
+        gravity: score === '✘' ? 0.8 : 0.5,                   // 重力加速度
         friction: 0.99                  // 摩擦力
     };
 
@@ -1249,3 +1269,4 @@ function showFastReactionEffect(button) {
         fastReactionEffect.remove();
     }, 1500);
 }
+
