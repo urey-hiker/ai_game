@@ -1272,8 +1272,8 @@ body {
 
 /* 奖励图标样式 */
 .reward-icon {
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 60px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1291,7 +1291,7 @@ body {
 /* 双倍分数图标 */
 .double-score-icon {
     font-family: 'Uranus', sans-serif;
-    font-size: 1.5rem;
+    font-size: 40px;
     font-weight: bold;
     color: gold;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
@@ -1300,17 +1300,18 @@ body {
 /* 双倍分数倒计时 */
 .double-score-timer {
     font-family: 'Uranus', sans-serif;
-    font-size: 0.8rem;
+    font-size: 1rem;
     color: #aaa;
-    margin-top: 2px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    margin-top: -5px;
 }
 
 /* 免疫图标 */
 .immunity-icon {
-    width: 30px;
-    height: 30px;
+    width: 50px;
+    height: 50px;
     background-image: url('images/shell.png');
-    background-size: contain;
+    background-size: 75px 75px;
     background-repeat: no-repeat;
     background-position: center;
 }
