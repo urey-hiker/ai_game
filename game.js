@@ -31,6 +31,8 @@ window.gameState = {
     totalTime: 0,
     consecutiveErrors: 0,
     doubleScoreActive: false,
+    doubleScoreInterval: null,
+    doubleScoreTimeout: null,
     immunityActive: false,
     immunityCount: 0,
     unlockedAchievements: [],
@@ -310,6 +312,8 @@ function startGame() {
     gameState.consecutiveErrors = 0;
     gameState.totalTime = 0;
     gameState.doubleScoreActive = false;
+    gameState.doubleScoreInterval = null;
+    gameState.doubleScoreTimeout = null;
     gameState.immunityActive = false;
     gameState.immunityCount = 0;
 
@@ -892,7 +896,7 @@ function checkComboRewards() {
     const comboMilestones = Object.keys(gameConfig.comboRewards).map(Number);
 
     for (const milestone of comboMilestones) {
-        if (gameState.combo === milestone) {
+        if (gameState.combo > 0 && gameState.combo % milestone === 0) {
             const reward = gameConfig.comboRewards[milestone];
 
             // 播放连击音效
@@ -903,8 +907,6 @@ function checkComboRewards() {
 
             // 显示奖励效果
             showBonusEffect(reward.message);
-
-            break;
         }
     }
 }
@@ -913,50 +915,107 @@ function checkComboRewards() {
 function applyComboReward(reward) {
     switch (reward.type) {
         case 'doubleScore':
-            gameState.doubleScoreActive = true;
+            // 检查是否已有双倍分数奖励
+            const existingDoubleScoreIcon = document.getElementById('double-score-reward');
             
-            // 创建双倍分数图标
-            const doubleScoreIcon = document.createElement('div');
-            doubleScoreIcon.className = 'reward-icon';
-            doubleScoreIcon.id = 'double-score-reward';
-            
-            // 添加2x图标
-            const iconText = document.createElement('div');
-            iconText.className = 'double-score-icon';
-            iconText.textContent = '2x';
-            doubleScoreIcon.appendChild(iconText);
-            
-            // 添加倒计时
-            const timer = document.createElement('div');
-            timer.className = 'double-score-timer';
-            timer.textContent = Math.ceil(reward.duration / 1000);
-            doubleScoreIcon.appendChild(timer);
-            
-            // 添加到奖励容器
-            elements.game.rewardsContainer.appendChild(doubleScoreIcon);
-            
-            // 倒计时更新
-            const countdownInterval = setInterval(() => {
-                const timeLeft = Math.ceil((reward.duration - (Date.now() - startTime)) / 1000);
-                if (timeLeft <= 0) {
-                    clearInterval(countdownInterval);
-                    doubleScoreIcon.classList.add('disappearing');
-                    setTimeout(() => {
-                        doubleScoreIcon.remove();
-                    }, 500);
-                } else {
-                    timer.textContent = timeLeft;
+            if (existingDoubleScoreIcon) {
+                // 如果已存在双倍分数奖励，只延长时间
+                
+                // 获取当前倒计时元素
+                const timer = existingDoubleScoreIcon.querySelector('.double-score-timer');
+                
+                // 获取当前剩余时间（秒）
+                const currentTimeLeft = parseInt(timer.textContent);
+                
+                // 计算新的总时间（当前剩余时间 + 新奖励时间）
+                const newDuration = currentTimeLeft * 1000 + reward.duration;
+                
+                // 更新倒计时显示
+                timer.textContent = Math.ceil(newDuration / 1000);
+                
+                // 添加闪烁效果表示更新
+                existingDoubleScoreIcon.classList.add('updated');
+                setTimeout(() => {
+                    existingDoubleScoreIcon.classList.remove('updated');
+                }, 500);
+                
+                // 清除旧的定时器
+                if (gameState.doubleScoreInterval) {
+                    clearInterval(gameState.doubleScoreInterval);
                 }
-            }, 1000);
-            
-            // 记录开始时间
-            const startTime = Date.now();
-            
-            // 设置定时器结束双倍分数
-            setTimeout(() => {
-                gameState.doubleScoreActive = false;
-                clearInterval(countdownInterval);
-            }, reward.duration);
+                if (gameState.doubleScoreTimeout) {
+                    clearTimeout(gameState.doubleScoreTimeout);
+                }
+                
+                // 记录开始时间
+                const startTime = Date.now();
+                
+                // 设置新的倒计时更新
+                gameState.doubleScoreInterval = setInterval(() => {
+                    const timeLeft = Math.ceil((newDuration - (Date.now() - startTime)) / 1000);
+                    if (timeLeft <= 0) {
+                        clearInterval(gameState.doubleScoreInterval);
+                        existingDoubleScoreIcon.classList.add('disappearing');
+                        setTimeout(() => {
+                            existingDoubleScoreIcon.remove();
+                        }, 500);
+                    } else {
+                        timer.textContent = timeLeft;
+                    }
+                }, 1000);
+                
+                // 设置新的定时器结束双倍分数
+                gameState.doubleScoreTimeout = setTimeout(() => {
+                    gameState.doubleScoreActive = false;
+                    clearInterval(gameState.doubleScoreInterval);
+                }, newDuration);
+            } else {
+                // 如果不存在，创建新的双倍分数奖励
+                gameState.doubleScoreActive = true;
+                
+                // 创建双倍分数图标
+                const doubleScoreIcon = document.createElement('div');
+                doubleScoreIcon.className = 'reward-icon';
+                doubleScoreIcon.id = 'double-score-reward';
+                
+                // 添加2x图标
+                const iconText = document.createElement('div');
+                iconText.className = 'double-score-icon';
+                iconText.textContent = '2x';
+                doubleScoreIcon.appendChild(iconText);
+                
+                // 添加倒计时
+                const timer = document.createElement('div');
+                timer.className = 'double-score-timer';
+                timer.textContent = Math.ceil(reward.duration / 1000);
+                doubleScoreIcon.appendChild(timer);
+                
+                // 添加到奖励容器
+                elements.game.rewardsContainer.appendChild(doubleScoreIcon);
+                
+                // 记录开始时间
+                const startTime = Date.now();
+                
+                // 倒计时更新
+                gameState.doubleScoreInterval = setInterval(() => {
+                    const timeLeft = Math.ceil((reward.duration - (Date.now() - startTime)) / 1000);
+                    if (timeLeft <= 0) {
+                        clearInterval(gameState.doubleScoreInterval);
+                        doubleScoreIcon.classList.add('disappearing');
+                        setTimeout(() => {
+                            doubleScoreIcon.remove();
+                        }, 500);
+                    } else {
+                        timer.textContent = timeLeft;
+                    }
+                }, 1000);
+                
+                // 设置定时器结束双倍分数
+                gameState.doubleScoreTimeout = setTimeout(() => {
+                    gameState.doubleScoreActive = false;
+                    clearInterval(gameState.doubleScoreInterval);
+                }, reward.duration);
+            }
             break;
 
         case 'extraTime':
