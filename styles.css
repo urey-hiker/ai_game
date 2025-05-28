@@ -1169,17 +1169,11 @@ body {
 /* 为prompt添加只有scale效果的动画 */
 @keyframes promptScaleBounce {
     0% { transform: scale(1); }
-    8% { transform: scale(1.02); }
-    16% { transform: scale(1.04); }
-    24% { transform: scale(1.06); }
-    32% { transform: scale(1.08); }
-    40% { transform: scale(1.06); }
-    48% { transform: scale(1.04); }
-    56% { transform: scale(1.02); }
-    64% { transform: scale(1); }
-    72% { transform: scale(0.98); }
-    80% { transform: scale(1.02); }
-    88% { transform: scale(1.04); }
-    96% { transform: scale(1.01); }
+    50% { transform: scale(1); }
+    60% { transform: scale(1.02); }
+    70% { transform: scale(0.99); }
+    80% { transform: scale(1.04); }
+    90% { transform: scale(0.98); }
+    95% { transform: scale(1.01); }
     100% { transform: scale(1); }
 }
