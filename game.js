@@ -168,9 +168,15 @@ function showDebugMessage(message) {
 
     // 2秒后移除消息
     setTimeout(() => {
-        debugMessage.remove();
-    }, 2000);
+        debugMessage.classList.add('fade-out');
+        setTimeout(() => {
+            debugMessage.remove();
+        }, 500);
+    }, 1500);
 }
+
+// 导出调试消息函数，供其他模块使用
+window.showDebugMessage = showDebugMessage;
 
 // 加载保存的游戏数据
 function loadSavedData() {
