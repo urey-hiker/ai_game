@@ -1398,13 +1398,13 @@ function adjustOptionButtonTextSize() {
         const buttonWidth = button.offsetWidth;
         
         // 根据按钮宽度计算合适的字体大小
-        // 文字大小约为按钮宽度的40%比较合适
-        const fontSize = Math.max(Math.min(buttonWidth * 0.4, 32), 16);
+        // 文字大小约为按钮宽度的80%（原来的两倍）
+        const fontSize = Math.max(Math.min(buttonWidth * 0.8, 64), 32);
         
         // 设置字体大小
         button.style.fontSize = `${fontSize}px`;
         
         // 调整文字行高，确保垂直居中
-        button.style.lineHeight = '1.2';
+        button.style.lineHeight = '1.1';
     });
 }
