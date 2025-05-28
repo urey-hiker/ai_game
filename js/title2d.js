@@ -52,6 +52,9 @@ function createTitleElements() {
     
     // 添加到容器
     titleContainer.appendChild(titleWrapper);
+    
+    // 调整标题大小以适应屏幕
+    adjustTitleSize();
 }
 
 // 处理R的点击事件
@@ -124,7 +127,42 @@ function toggleGameDebugMode() {
 
 // 窗口大小变化时调整
 function onWindowResize() {
-    // 可以添加响应式调整逻辑
+    adjustTitleSize();
+}
+
+// 调整标题大小以适应屏幕宽度
+function adjustTitleSize() {
+    if (!headTextDiv || !rTextDiv || !titleContainer) return;
+    
+    const containerWidth = titleContainer.clientWidth;
+    const containerHeight = titleContainer.clientHeight;
+    const aspectRatio = containerWidth / containerHeight;
+    
+    // 基础字体大小，根据容器宽度动态计算
+    const baseSize = Math.min(containerWidth * 0.2, 240); // 限制最大值
+    
+    // 设置"头文字"的字体大小
+    headTextDiv.style.fontSize = `${baseSize}px`;
+    
+    // "R"的字体大小稍大一些
+    rTextDiv.style.fontSize = `${baseSize * 2}px`;
+    
+    // 根据屏幕宽度调整标题容器的高度和边距
+    if (containerWidth < 600) {
+        // 移动设备
+        titleContainer.style.height = '120px';
+        titleContainer.style.marginTop = '10px';
+    } else if (containerWidth < 1024) {
+        // 平板设备
+        titleContainer.style.height = '150px';
+        titleContainer.style.marginTop = '20px';
+    } else {
+        // 桌面设备
+        titleContainer.style.height = '180px';
+        titleContainer.style.marginTop = '30px';
+    }
+    
+    console.log(`调整标题大小: 容器宽度=${containerWidth}px, 基础字体大小=${baseSize}px`);
 }
 
 // 开始动画循环
