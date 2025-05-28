@@ -95,7 +95,12 @@ const elements = {
         levelUp: document.getElementById('level-up-sound'),
         win: document.getElementById('win-sound'),
         bgm: document.getElementById('bgm-sound'),
-        home: document.getElementById('home-sound')
+        home: document.getElementById('home-sound'),
+        // 连击欢呼音效
+        yay1: document.getElementById('yay1-sound'),
+        yay2: document.getElementById('yay2-sound'),
+        yay3: document.getElementById('yay3-sound'),
+        yay4: document.getElementById('yay4-sound')
     }
 };
 
@@ -653,6 +658,9 @@ function handleCorrectAnswer(button) {
     if (gameState.combo > gameState.maxCombo) {
         gameState.maxCombo = gameState.combo;
     }
+    
+    // 播放连击欢呼音效
+    playComboYaySound(gameState.combo);
 
     // 显示连击效果
     showComboEffect(button);
@@ -1181,4 +1189,25 @@ function playHomeMusic() {
     elements.sounds.home.play().catch(error => {
         console.log('主菜单音乐播放失败，等待用户交互后再播放:', error);
     });
+}
+// 播放连击欢呼音效
+function playComboYaySound(comboCount) {
+    // 连击数小于2时不播放
+    if (comboCount < 2) return;
+    
+    // 连击数为5时播放特殊音效
+    if (comboCount === 5) {
+        elements.sounds.yay4.currentTime = 0;
+        elements.sounds.yay4.play();
+        return;
+    }
+    
+    // 其他连击数随机播放普通欢呼音效
+    const randomYay = Math.floor(Math.random() * 3) + 1; // 1-3之间的随机数
+    const yaySound = elements.sounds[`yay${randomYay}`];
+    
+    if (yaySound) {
+        yaySound.currentTime = 0;
+        yaySound.play();
+    }
 }
