@@ -273,6 +273,8 @@ body {
     box-shadow: var(--shadow);
     text-align: center;
     max-width: 90%;
+    animation: promptScaleBounce 1.12s infinite ease-in-out;
+    transform-origin: center;
 }
 
 .options-container {
@@ -298,7 +300,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     font-family: 'Uranus', sans-serif;
     text-align: center;
     overflow: hidden;
@@ -961,36 +963,46 @@ body {
 }
 /* 按照107 BPM的音乐节奏添加选项晃动动画 */
 @keyframes optionSwayBounce1 {
-    0% { transform: rotate(-2deg) scale(1); }
-    12.5% { transform: rotate(-1deg) scale(1.025); }
-    25% { transform: rotate(0deg) scale(1.05); }
-    37.5% { transform: rotate(1deg) scale(1.025); }
-    50% { transform: rotate(2deg) scale(1); }
-    62.5% { transform: rotate(1deg) scale(1.015); }
-    75% { transform: rotate(0deg) scale(1.03); }
-    87.5% { transform: rotate(-1deg) scale(1.015); }
-    100% { transform: rotate(-2deg) scale(1); }
+    0% { transform: rotate(-3deg) scale(1); }
+    8% { transform: rotate(-2deg) scale(1.02); }
+    16% { transform: rotate(-1deg) scale(1.04); }
+    24% { transform: rotate(0deg) scale(1.06); }
+    32% { transform: rotate(1deg) scale(1.08); }
+    40% { transform: rotate(2deg) scale(1.06); }
+    48% { transform: rotate(3deg) scale(1.04); }
+    56% { transform: rotate(2deg) scale(1.02); }
+    64% { transform: rotate(1deg) scale(1); }
+    72% { transform: rotate(0deg) scale(0.98); }
+    80% { transform: rotate(-1deg) scale(1.02); }
+    88% { transform: rotate(-2deg) scale(1.04); }
+    96% { transform: rotate(-2.5deg) scale(1.01); }
+    100% { transform: rotate(-3deg) scale(1); }
 }
 
 @keyframes optionSwayBounce2 {
-    0% { transform: rotate(2deg) scale(1); }
-    12.5% { transform: rotate(1deg) scale(1.025); }
-    25% { transform: rotate(0deg) scale(1.05); }
-    37.5% { transform: rotate(-1deg) scale(1.025); }
-    50% { transform: rotate(-2deg) scale(1); }
-    62.5% { transform: rotate(-1deg) scale(1.015); }
-    75% { transform: rotate(0deg) scale(1.03); }
-    87.5% { transform: rotate(1deg) scale(1.015); }
-    100% { transform: rotate(2deg) scale(1); }
+    0% { transform: rotate(3deg) scale(1); }
+    8% { transform: rotate(2deg) scale(1.02); }
+    16% { transform: rotate(1deg) scale(1.04); }
+    24% { transform: rotate(0deg) scale(1.06); }
+    32% { transform: rotate(-1deg) scale(1.08); }
+    40% { transform: rotate(-2deg) scale(1.06); }
+    48% { transform: rotate(-3deg) scale(1.04); }
+    56% { transform: rotate(-2deg) scale(1.02); }
+    64% { transform: rotate(-1deg) scale(1); }
+    72% { transform: rotate(0deg) scale(0.98); }
+    80% { transform: rotate(1deg) scale(1.02); }
+    88% { transform: rotate(2deg) scale(1.04); }
+    96% { transform: rotate(2.5deg) scale(1.01); }
+    100% { transform: rotate(3deg) scale(1); }
 }
 
 .option-btn {
-    animation: optionSwayBounce1 2.24s infinite ease-in-out;
+    animation: optionSwayBounce1 1.12s infinite ease-in-out;
     transform-origin: center bottom;
 }
 
 .option-btn:nth-child(2n) {
-    animation: optionSwayBounce2 2.24s infinite ease-in-out;
+    animation: optionSwayBounce2 1.12s infinite ease-in-out;
 }
 
 /* 当鼠标悬停或点击时暂停动画，避免干扰用户操作 */
@@ -1153,4 +1165,21 @@ body {
 .option-btn.appearing {
   animation: optionAppear 0.5s forwards;
   transform-origin: center center;
+}
+/* 为prompt添加只有scale效果的动画 */
+@keyframes promptScaleBounce {
+    0% { transform: scale(1); }
+    8% { transform: scale(1.02); }
+    16% { transform: scale(1.04); }
+    24% { transform: scale(1.06); }
+    32% { transform: scale(1.08); }
+    40% { transform: scale(1.06); }
+    48% { transform: scale(1.04); }
+    56% { transform: scale(1.02); }
+    64% { transform: scale(1); }
+    72% { transform: scale(0.98); }
+    80% { transform: scale(1.02); }
+    88% { transform: scale(1.04); }
+    96% { transform: scale(1.01); }
+    100% { transform: scale(1); }
 }
