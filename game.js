@@ -906,7 +906,7 @@ function checkComboRewards() {
             applyComboReward(reward);
 
             // 显示奖励效果
-            showGameNotification(reward.message, 'bonus');
+            showGameNotification(reward.message, 'floating');
         }
     }
 }
@@ -1027,8 +1027,6 @@ function applyComboReward(reward) {
             gameState.time += reward.value;
             updateGameUI();
             
-            // 显示额外时间奖励提示
-            showGameNotification(reward.message, 'floating');
             break;
 
         case 'immunity':
@@ -1181,6 +1179,15 @@ function checkLevelProgress() {
 
         // 更新UI
         updateGameUI();
+        
+        // 添加关卡数字弹跳动画
+        const levelElement = elements.game.level;
+        levelElement.classList.add('level-bounce');
+        
+        // 动画结束后移除类
+        setTimeout(() => {
+            levelElement.classList.remove('level-bounce');
+        }, 600);
     }
 }
 
