@@ -106,9 +106,9 @@ function initGame() {
     setupDebugMode();
     renderAchievements();
 
-    // 初始化3D标题
-    if (typeof window.init3DTitle === 'function') {
-        window.init3DTitle();
+    // 初始化2D标题
+    if (typeof window.init2DTitle === 'function') {
+        window.init2DTitle();
     }
 
     // 设置点击继续功能
