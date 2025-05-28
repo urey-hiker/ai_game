@@ -224,6 +224,17 @@ function setupEventListeners() {
         elements.sounds.click.play();
         showScreen('achievements');
     });
+    
+    // 添加窗口大小改变事件监听
+    window.addEventListener('resize', function() {
+        adjustOptionButtonTextSize();
+    });
+
+    // 对于移动设备，添加屏幕方向改变事件
+    window.addEventListener('orientationchange', function() {
+        // 延迟执行以确保DOM已更新
+        setTimeout(adjustOptionButtonTextSize, 100);
+    });
 
     // 返回按钮
     elements.buttons.backFromRules.addEventListener('click', () => {
@@ -497,6 +508,9 @@ function generateBasicRound() {
         text: targetText,
         mode: 'basic'
     };
+    
+    // 调整选项按钮文字大小
+    adjustOptionButtonTextSize();
 }
 
 // 生成高级模式的一轮游戏
@@ -561,6 +575,9 @@ function generateAdvancedRound() {
     gameState.currentCorrectOption = {
         mode: 'advanced'
     };
+    
+    // 调整选项按钮文字大小
+    adjustOptionButtonTextSize();
 }
 
 // 创建选项按钮
@@ -583,6 +600,9 @@ function createOptionButton(color, text, isDistractor, mode) {
             button.classList.remove('appearing');
             // 应用晃动效果
             button.classList.add(button.dataset.swayClass);
+            
+            // 调整文字大小
+            adjustOptionButtonTextSize();
         }
     });
 
@@ -1367,4 +1387,24 @@ function switchCoverTargets(count) {
         btn.classList.add('covered');
         btn.appendChild(cover);
     }
+}
+// 调整选项按钮文字大小
+function adjustOptionButtonTextSize() {
+    const optionButtons = document.querySelectorAll('.option-btn');
+    if (!optionButtons.length) return;
+    
+    optionButtons.forEach(button => {
+        // 获取按钮的宽度
+        const buttonWidth = button.offsetWidth;
+        
+        // 根据按钮宽度计算合适的字体大小
+        // 文字大小约为按钮宽度的40%比较合适
+        const fontSize = Math.max(Math.min(buttonWidth * 0.4, 32), 16);
+        
+        // 设置字体大小
+        button.style.fontSize = `${fontSize}px`;
+        
+        // 调整文字行高，确保垂直居中
+        button.style.lineHeight = '1.2';
+    });
 }
