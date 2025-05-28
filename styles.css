@@ -1047,3 +1047,42 @@ body {
         font-size: 3.5rem;
     }
 }
+/* 调试模式消息样式 */
+.debug-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    font-size: 1.5rem;
+    padding: 15px 25px;
+    border-radius: 8px;
+    border: 2px solid #00ff00;
+    z-index: 9999;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+    animation: glow 1.5s infinite alternate;
+}
+
+.debug-message.fade-out {
+    animation: fadeOut 0.5s forwards;
+}
+
+@keyframes glow {
+    from {
+        box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    }
+    to {
+        box-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}

@@ -7,6 +7,8 @@ let headTextDiv;
 let rTextDiv;
 let isAnimating = true;
 let animationFrame;
+let rClickCount = 0; // 记录R被点击的次数
+let rClickTimer = null; // 用于重置点击计数的定时器
 
 // 初始化函数
 function init2DTitle() {
@@ -42,10 +44,74 @@ function createTitleElements() {
     rTextDiv = document.createElement('div');
     rTextDiv.className = 'r-text';
     rTextDiv.textContent = 'R';
+    
+    // 添加R的点击事件，用于触发调试模式
+    rTextDiv.addEventListener('click', handleRClick);
+    
     titleWrapper.appendChild(rTextDiv);
     
     // 添加到容器
     titleContainer.appendChild(titleWrapper);
+}
+
+// 处理R的点击事件
+function handleRClick() {
+    // 播放点击音效
+    const clickSound = document.getElementById('click-sound');
+    if (clickSound) {
+        clickSound.currentTime = 0;
+        clickSound.play();
+    }
+    
+    // 增加点击计数
+    rClickCount++;
+    
+    // 清除之前的定时器
+    if (rClickTimer) {
+        clearTimeout(rClickTimer);
+    }
+    
+    // 设置新的定时器，3秒后重置点击计数
+    rClickTimer = setTimeout(() => {
+        rClickCount = 0;
+    }, 3000);
+    
+    // 检查是否达到5次点击
+    if (rClickCount >= 5) {
+        // 重置点击计数
+        rClickCount = 0;
+        
+        // 切换调试模式
+        toggleDebugMode();
+    }
+}
+
+// 切换调试模式
+function toggleDebugMode() {
+    // 如果gameState存在，切换调试模式
+    if (window.gameState) {
+        window.gameState.debugMode = !window.gameState.debugMode;
+        
+        // 显示调试模式状态
+        const message = window.gameState.debugMode ? '调试模式已开启' : '调试模式已关闭';
+        showDebugMessage(message);
+    }
+}
+
+// 显示调试模式消息
+function showDebugMessage(message) {
+    const debugMsg = document.createElement('div');
+    debugMsg.className = 'debug-message';
+    debugMsg.textContent = message;
+    document.body.appendChild(debugMsg);
+    
+    // 2秒后移除消息
+    setTimeout(() => {
+        debugMsg.classList.add('fade-out');
+        setTimeout(() => {
+            debugMsg.remove();
+        }, 500);
+    }, 1500);
 }
 
 // 窗口大小变化时调整
