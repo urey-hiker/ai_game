@@ -74,6 +74,7 @@ const elements = {
         level: document.getElementById('level'),
         promptContainer: document.getElementById('prompt-container'),
         optionsContainer: document.getElementById('options-container'),
+        rewardsContainer: document.getElementById('rewards-container'),
         countdown: document.getElementById('countdown'),
         countdownNumber: document.querySelector('.countdown-number'),
         comboIndicator: document.getElementById('combo-indicator'),
@@ -315,6 +316,9 @@ function startGame() {
     gameState.correctClicks = 0;
     gameState.clickTimes = [];
     gameState.lastClickTime = 0;
+    
+    // 清空奖励容器
+    elements.game.rewardsContainer.innerHTML = '';
     
     // 初始化宠物管理器
     petManager.init();
@@ -779,6 +783,16 @@ function handleWrongAnswer(button) {
     // 如果有免疫，则不计错误
     if (gameState.immunityActive) {
         gameState.immunityActive = false;
+        
+        // 移除免疫图标
+        const immunityIcon = document.getElementById('immunity-reward');
+        if (immunityIcon) {
+            immunityIcon.classList.add('disappearing');
+            setTimeout(() => {
+                immunityIcon.remove();
+            }, 500);
+        }
+        
         showBonusEffect('免疫生效！');
         return;
     }
@@ -874,18 +888,74 @@ function applyComboReward(reward) {
     switch (reward.type) {
         case 'doubleScore':
             gameState.doubleScoreActive = true;
+            
+            // 创建双倍分数图标
+            const doubleScoreIcon = document.createElement('div');
+            doubleScoreIcon.className = 'reward-icon';
+            doubleScoreIcon.id = 'double-score-reward';
+            
+            // 添加2x图标
+            const iconText = document.createElement('div');
+            iconText.className = 'double-score-icon';
+            iconText.textContent = '2x';
+            doubleScoreIcon.appendChild(iconText);
+            
+            // 添加倒计时
+            const timer = document.createElement('div');
+            timer.className = 'double-score-timer';
+            timer.textContent = Math.ceil(reward.duration / 1000);
+            doubleScoreIcon.appendChild(timer);
+            
+            // 添加到奖励容器
+            elements.game.rewardsContainer.appendChild(doubleScoreIcon);
+            
+            // 倒计时更新
+            const countdownInterval = setInterval(() => {
+                const timeLeft = Math.ceil((reward.duration - (Date.now() - startTime)) / 1000);
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    doubleScoreIcon.classList.add('disappearing');
+                    setTimeout(() => {
+                        doubleScoreIcon.remove();
+                    }, 500);
+                } else {
+                    timer.textContent = timeLeft;
+                }
+            }, 1000);
+            
+            // 记录开始时间
+            const startTime = Date.now();
+            
+            // 设置定时器结束双倍分数
             setTimeout(() => {
                 gameState.doubleScoreActive = false;
+                clearInterval(countdownInterval);
             }, reward.duration);
             break;
 
         case 'extraTime':
             gameState.time += reward.value;
             updateGameUI();
+            
+            // 显示额外时间奖励提示
+            showBonusEffect(reward.message);
             break;
 
         case 'immunity':
             gameState.immunityActive = true;
+            
+            // 创建免疫图标
+            const immunityIcon = document.createElement('div');
+            immunityIcon.className = 'reward-icon';
+            immunityIcon.id = 'immunity-reward';
+            
+            // 添加盾牌图标
+            const shieldIcon = document.createElement('div');
+            shieldIcon.className = 'immunity-icon';
+            immunityIcon.appendChild(shieldIcon);
+            
+            // 添加到奖励容器
+            elements.game.rewardsContainer.appendChild(immunityIcon);
             break;
     }
 }
