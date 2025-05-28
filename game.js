@@ -1333,10 +1333,17 @@ function showFastReactionEffect(button) {
     fastReactionEffect.className = 'fast-reaction-effect';
     fastReactionEffect.textContent = '反应神速！';
     
-    // 设置初始位置（相对于按钮）
-    const buttonRect = button.getBoundingClientRect();
-    fastReactionEffect.style.left = `${buttonRect.left + buttonRect.width / 2}px`;
-    fastReactionEffect.style.top = `${buttonRect.top - 20}px`;
+    // 设置初始位置（game-screen底部随机位置）
+    const gameScreen = elements.screens.game;
+    const gameRect = gameScreen.getBoundingClientRect();
+    
+    // 随机水平位置（留出边距，避免文字被截断）
+    const randomX = Math.random() * (gameRect.width - 200) + gameRect.left + 100; // 100px边距
+    // 固定在game-screen底部
+    const bottomY = gameRect.bottom - 80; // 距离game-screen底部80px
+    
+    fastReactionEffect.style.left = `${randomX}px`;
+    fastReactionEffect.style.top = `${bottomY}px`;
     
     // 添加到文档
     document.body.appendChild(fastReactionEffect);

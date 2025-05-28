@@ -241,9 +241,8 @@ body {
     display: flex;
     justify-content: space-around;
     padding: 15px;
-    background-color: rgba(255, 255, 255, 0.8);
-    border-bottom: 2px solid var(--secondary-color);
-    font-size: 1.2rem;
+    background-color: rgba(128, 128, 128, 0.2);
+    font-size: 1.8rem;
     font-weight: bold;
     font-family: 'Uranus', sans-serif;
 }
@@ -698,7 +697,7 @@ body {
 .level-container span:last-child {
     margin-left: 5px;
     color: var(--primary-color);
-    font-size: 1.3rem;
+    font-size: 1.8rem;
     font-family: 'Uranus', sans-serif;
 }
 /* 3D标题样式 */
@@ -717,7 +716,6 @@ body {
 
 /* 头文字的HTML覆盖层 */
 .head-text-overlay {
-  
     font-family: 'Uranus', sans-serif;
     font-size: 4.5rem;
     color: #444;
