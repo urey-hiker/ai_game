@@ -1031,12 +1031,12 @@ function shareResult() {
     }
 
     // 创建分享文本
-    const shareText = `我在《字色快打！》中获得了${gameState.score}分，最高连击${gameState.maxCombo}次，通过了${gameState.clearedLevels}关！正确率${accuracy}%，平均反应时间${averageTime}秒。来挑战我吧！`;
+    const shareText = `我在《头文字R》中获得了${gameState.score}分，最高连击${gameState.maxCombo}次，通过了${gameState.clearedLevels}关！正确率${accuracy}%，平均反应时间${averageTime}秒。来挑战我吧！`;
 
     // 尝试使用Web Share API
     if (navigator.share) {
         navigator.share({
-            title: '字色快打！',
+            title: '头文字R',
             text: shareText,
             url: window.location.href
         }).catch(err => {
