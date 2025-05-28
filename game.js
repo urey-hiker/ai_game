@@ -100,7 +100,9 @@ const elements = {
         yay1: document.getElementById('yay1-sound'),
         yay2: document.getElementById('yay2-sound'),
         yay3: document.getElementById('yay3-sound'),
-        yay4: document.getElementById('yay4-sound')
+        yay4: document.getElementById('yay4-sound'),
+        // 快速反应音效
+        nioce: document.getElementById('nioce-sound')
     }
 };
 
@@ -127,15 +129,15 @@ function initGame() {
 function setupClickToContinue() {
     const clickOverlay = document.getElementById('click-to-continue');
     const menuOptions = document.querySelector('.menu-options');
-    
+
     if (clickOverlay) {
-        clickOverlay.addEventListener('click', function() {
+        clickOverlay.addEventListener('click', function () {
             // 播放主菜单音乐
             playHomeMusic();
-            
+
             // 显示菜单选项
             menuOptions.style.display = 'flex';
-            
+
             // 隐藏点击提示层
             clickOverlay.style.display = 'none';
         });
@@ -635,6 +637,15 @@ function handleCorrectAnswer(button) {
     // 播放正确音效
     elements.sounds.correct.currentTime = 0;
     elements.sounds.correct.play();
+    
+    // 如果反应时间小于1.3秒，播放快速反应音效
+    if (reactionTime < 1.3) {
+        elements.sounds.nioce.currentTime = 0;
+        elements.sounds.nioce.play();
+        
+        // 显示快速反应提示
+        showFastReactionEffect(button);
+    }
 
     // 显示正确提示
     // showFeedbackMessage('正确！', 'correct');
@@ -658,7 +669,7 @@ function handleCorrectAnswer(button) {
     if (gameState.combo > gameState.maxCombo) {
         gameState.maxCombo = gameState.combo;
     }
-    
+
     // 播放连击欢呼音效
     playComboYaySound(gameState.combo);
 
@@ -1073,7 +1084,7 @@ document.addEventListener('DOMContentLoaded', initGame);
 function adjustOptionsContainerColumns(optionsCount) {
     const container = elements.game.optionsContainer;
     const isMobile = window.innerWidth <= 500;
-    
+
     // 根据选项数量设置合适的列数
     let columns;
     switch (optionsCount) {
@@ -1089,7 +1100,7 @@ function adjustOptionsContainerColumns(optionsCount) {
         default:
             columns = Math.ceil(Math.sqrt(optionsCount)); // 默认尽量接近正方形布局
     }
-    
+
     // 设置列数和列宽
     const columnWidth = isMobile ? 70 : 80;
     container.style.gridTemplateColumns = `repeat(${columns}, ${columnWidth}px)`;
@@ -1194,20 +1205,47 @@ function playHomeMusic() {
 function playComboYaySound(comboCount) {
     // 连击数小于2时不播放
     if (comboCount < 2) return;
-    
+
     // 连击数为5时播放特殊音效
     if (comboCount === 5) {
         elements.sounds.yay4.currentTime = 0;
         elements.sounds.yay4.play();
         return;
     }
-    
+
     // 其他连击数随机播放普通欢呼音效
-    const randomYay = Math.floor(Math.random() * 3) + 1; // 1-3之间的随机数
-    const yaySound = elements.sounds[`yay${randomYay}`];
-    
-    if (yaySound) {
-        yaySound.currentTime = 0;
-        yaySound.play();
+    if (comboCount == 2 || Math.random() < 0.5) {
+        const randomYay = Math.floor(Math.random() * 3) + 1; // 1-3之间的随机数
+        const yaySound = elements.sounds[`yay${randomYay}`];
+
+        if (yaySound) {
+            yaySound.currentTime = 0;
+            yaySound.play();
+        }
     }
+}
+// 显示快速反应效果
+function showFastReactionEffect(button) {
+    // 创建快速反应提示元素
+    const fastReactionEffect = document.createElement('div');
+    fastReactionEffect.className = 'fast-reaction-effect';
+    fastReactionEffect.textContent = '反应神速！';
+    
+    // 设置初始位置（相对于按钮）
+    const buttonRect = button.getBoundingClientRect();
+    fastReactionEffect.style.left = `${buttonRect.left + buttonRect.width / 2}px`;
+    fastReactionEffect.style.top = `${buttonRect.top - 20}px`;
+    
+    // 添加到文档
+    document.body.appendChild(fastReactionEffect);
+    
+    // 添加动画类
+    setTimeout(() => {
+        fastReactionEffect.classList.add('animate');
+    }, 10);
+    
+    // 动画结束后移除元素
+    setTimeout(() => {
+        fastReactionEffect.remove();
+    }, 1500);
 }

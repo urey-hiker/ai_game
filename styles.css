@@ -1086,3 +1086,39 @@ body {
         opacity: 0;
     }
 }
+/* 快速反应效果样式 */
+.fast-reaction-effect {
+    position: fixed;
+    transform: translateX(-50%);
+    color: #ffcc00;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    white-space: nowrap;
+}
+
+.fast-reaction-effect.animate {
+    animation: fastReactionAnimation 1.5s ease-out forwards;
+}
+
+@keyframes fastReactionAnimation {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(0) scale(0.8);
+    }
+    20% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-20px) scale(1.2);
+    }
+    80% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-40px) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-60px) scale(0.8);
+    }
+}
