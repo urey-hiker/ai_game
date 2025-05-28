@@ -1,6 +1,13 @@
 /* 全局样式 */
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&display=swap');
 
+html, body {
+    touch-action: manipulation; /* 优先处理点击事件，阻止双击放大 */
+    -webkit-touch-callout: none; /* 禁止长按菜单 */
+    -webkit-user-select: none;   /* 禁止选中 */
+    user-select: none;
+  }
+
 :root {
     --primary-color: #ff6b6b;
     --secondary-color: #4ecdc4;
