@@ -1027,6 +1027,18 @@ function applyComboReward(reward) {
             gameState.time += reward.value;
             updateGameUI();
             
+            // 显示额外时间奖励提示
+            showGameNotification(reward.message, 'floating');
+            
+            // 添加时间数字弹跳动画
+            const timeElement = elements.game.time;
+            timeElement.classList.add('number-bounce');
+            
+            // 动画结束后移除类
+            setTimeout(() => {
+                timeElement.classList.remove('number-bounce');
+            }, 600);
+            
             break;
 
         case 'immunity':
@@ -1182,11 +1194,11 @@ function checkLevelProgress() {
         
         // 添加关卡数字弹跳动画
         const levelElement = elements.game.level;
-        levelElement.classList.add('level-bounce');
+        levelElement.classList.add('number-bounce');
         
         // 动画结束后移除类
         setTimeout(() => {
-            levelElement.classList.remove('level-bounce');
+            levelElement.classList.remove('number-bounce');
         }, 600);
     }
 }
