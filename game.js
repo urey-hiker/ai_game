@@ -70,7 +70,6 @@ const elements = {
     },
     game: {
         score: document.getElementById('score'),
-        combo: document.getElementById('combo'),
         time: document.getElementById('time'),
         level: document.getElementById('level'),
         promptContainer: document.getElementById('prompt-container'),
@@ -977,7 +976,6 @@ function increaseDifficulty() {
 // 更新游戏UI
 function updateGameUI() {
     elements.game.score.textContent = gameState.score;
-    elements.game.combo.textContent = gameState.combo;
     elements.game.time.textContent = Math.max(0, Math.floor(gameState.time * 10) / 10).toFixed(1);
     elements.game.level.textContent = gameState.level;
 

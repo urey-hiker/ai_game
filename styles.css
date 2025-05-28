@@ -273,7 +273,7 @@ body {
     box-shadow: var(--shadow);
     text-align: center;
     max-width: 90%;
-    animation: promptScaleBounce 1.12s infinite ease-in-out;
+    animation: promptScaleBounce 2.24s infinite ease-in-out;
     transform-origin: center;
 }
 
@@ -300,7 +300,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     font-family: 'Uranus', sans-serif;
     text-align: center;
     overflow: hidden;
@@ -687,14 +687,13 @@ body {
     font-weight: normal;
     font-style: normal;
 }
-.score-container, .combo-container, .time-container, .level-container {
+.score-container, .time-container, .level-container {
     display: flex;
     align-items: center;
     font-family: 'Uranus', sans-serif;
 }
 
 .score-container span:last-child, 
-.combo-container span:last-child, 
 .time-container span:last-child, 
 .level-container span:last-child {
     margin-left: 5px;
@@ -1169,11 +1168,10 @@ body {
 /* 为prompt添加只有scale效果的动画 */
 @keyframes promptScaleBounce {
     0% { transform: scale(1); }
-    50% { transform: scale(1); }
-    60% { transform: scale(1.02); }
-    70% { transform: scale(0.99); }
-    80% { transform: scale(1.04); }
-    90% { transform: scale(0.98); }
-    95% { transform: scale(1.01); }
+    75% { transform: scale(1); }
+    80% { transform: scale(1.02); }
+    85% { transform: scale(0.99); }
+    90% { transform: scale(1.04); }
+    95% { transform: scale(0.98); }
     100% { transform: scale(1); }
 }
