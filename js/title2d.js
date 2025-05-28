@@ -88,19 +88,37 @@ function handleRClick() {
 
 // 调用game.js中的调试模式切换功能
 function toggleGameDebugMode() {
-    // 直接访问gameState并切换调试模式
-    if (window.gameState) {
-        window.gameState.debugMode = !window.gameState.debugMode;
+    console.log("Attempting to toggle debug mode");
+    
+    // 检查gameState是否存在于window对象中
+    if (typeof window.gameState === 'undefined') {
+        console.error("gameState is not defined in window object");
+        return;
+    }
+    
+    // 切换调试模式
+    window.gameState.debugMode = !window.gameState.debugMode;
+    
+    // 显示调试模式状态
+    const message = window.gameState.debugMode ? '调试模式已开启！所有点击都将视为正确' : '调试模式已关闭';
+    console.log(message);
+    
+    // 使用game.js中的showDebugMessage函数
+    if (typeof window.showDebugMessage === 'function') {
+        window.showDebugMessage(message);
+    } else {
+        // 如果showDebugMessage不可用，创建一个简单的消息显示
+        const debugMsg = document.createElement('div');
+        debugMsg.className = 'debug-message';
+        debugMsg.textContent = message;
+        document.body.appendChild(debugMsg);
         
-        // 显示调试模式状态
-        const message = window.gameState.debugMode ? '调试模式已开启！所有点击都将视为正确' : '调试模式已关闭';
-        
-        // 使用game.js中的showDebugMessage函数
-        if (typeof window.showDebugMessage === 'function') {
-            window.showDebugMessage(message);
-        } else {
-            console.log('Debug mode:', window.gameState.debugMode);
-        }
+        setTimeout(() => {
+            debugMsg.classList.add('fade-out');
+            setTimeout(() => {
+                debugMsg.remove();
+            }, 500);
+        }, 1500);
     }
 }
 

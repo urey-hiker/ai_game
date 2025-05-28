@@ -20,7 +20,7 @@ const gameConfig = {
 };
 
 // 游戏状态
-const gameState = {
+window.gameState = {
     currentScreen: 'main-menu',
     score: 0,
     combo: 0,
