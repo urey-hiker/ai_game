@@ -181,6 +181,7 @@ body {
     max-height: 60vh;
     overflow-y: auto;
     overflow-x: hidden;
+    font-family: 'Uranus', sans-serif;
 }
 
 /* 自定义滚动条样式 */
@@ -1237,4 +1238,22 @@ body {
 
 .pet.sway2 {
     animation: optionSwayBounce2 1.12s infinite ease-in-out;
+}
+#rules-screen h2 {
+    font-family: 'Uranus', sans-serif;
+}
+
+.gameplay-example {
+    font-family: 'Uranus', sans-serif;
+}
+
+.prompt-example {
+    font-family: 'Uranus', sans-serif;
+    margin-bottom: 10px;
+}
+
+.combo-reward {
+    font-family: 'Uranus', sans-serif;
+    color: var(--primary-color);
+    font-weight: bold;
 }
