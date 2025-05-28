@@ -44,7 +44,8 @@ window.gameState = {
         currentTexts: ['红', '黄', '蓝'], // 当前使用的文字
         optionsCount: 4, // 当前选项数量
         nextLevelThreshold: 70 // 下一级难度的分数阈值
-    }
+    },
+    coverTimer: null // 遮盖定时器
 };
 
 // DOM元素引用
@@ -330,6 +331,10 @@ function startGame() {
 
     // 开始倒计时
     startCountdown();
+
+    // 清理所有旧遮罩
+    document.querySelectorAll('.cover-flip-effect').forEach(e => e.remove());
+    document.querySelectorAll('.option-btn.covered').forEach(e => e.classList.remove('covered'));
 }
 
 // 播放背景音乐
@@ -381,8 +386,32 @@ function startRound() {
     // 记录本轮开始时间
     gameState.lastClickTime = Date.now();
 
+    // 清除上轮遮盖定时器
+    if (gameState.coverTimer) {
+        clearTimeout(gameState.coverTimer);
+        gameState.coverTimer = null;
+    }
+
     // 使用动态难度生成游戏内容
     generateDynamicRound();
+
+    // 关卡>=10时，计算本轮应加的遮盖物数
+    if (gameState.level >= 10) {
+        const coverCount = Math.min(9, Math.floor((gameState.level - 10) / 5) + 1);
+        let covered = 0;
+        function scheduleNextCover() {
+            if (covered < coverCount) {
+                coverMultipleRandomButtons(1); // 每次只多盖一个
+                covered++;
+                if (covered < coverCount) {
+                    gameState.coverTimer = setTimeout(scheduleNextCover, 1000);
+                } else {
+                    gameState.coverTimer = null;
+                }
+            }
+        }
+        gameState.coverTimer = setTimeout(scheduleNextCover, 2000);
+    }
 
     // 开始计时器
     startTimer();
@@ -564,6 +593,11 @@ function createOptionButton(color, text, isDistractor, mode) {
 
 // 处理按钮点击
 function handleButtonClick(button) {
+    // 玩家点击时清除遮盖定时器
+    if (gameState.coverTimer) {
+        clearTimeout(gameState.coverTimer);
+        gameState.coverTimer = null;
+    }
     const mode = gameState.currentCorrectOption.mode;
     
     // 禁用所有选项按钮，防止重复点击
