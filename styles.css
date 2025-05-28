@@ -483,26 +483,65 @@ body {
     100% { transform: scale(1); opacity: 0; }
 }
 
-/* 奖励效果 */
-.bonus-effect {
+/* 游戏通知效果 */
+.game-notification {
     position: absolute;
+    font-weight: bold;
+    font-family: 'Uranus', sans-serif;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    text-align: center;
+    pointer-events: none;
+}
+
+/* 中央大提示样式（原bonus-effect） */
+.game-notification.bonus-style {
     top: 30%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 2rem;
-    font-weight: bold;
     color: var(--accent-color);
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     animation: bonusFade 2s forwards;
-    z-index: 5;
-    text-align: center;
-    pointer-events: none;
 }
 
 @keyframes bonusFade {
     0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
     20% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
     80% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+
+/* 浮动提示样式（原fast-reaction-effect） */
+.game-notification.floating-style {
+    transform: translateX(-50%);
+    color: #ffcc00;
+    font-size: 1.5rem;
+    opacity: 0;
+    white-space: nowrap;
+}
+
+.game-notification.floating-style.animate {
+    animation: floatingAnimation 1.5s ease-out forwards;
+}
+
+@keyframes floatingAnimation {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(0) scale(0.8);
+    }
+    20% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-20px) scale(1.2);
+    }
+    80% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-40px) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-60px) scale(0.8);
+    }
+}
     100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
 }
 /* 正确/错误提示样式 */
@@ -1105,43 +1144,9 @@ body {
         opacity: 0;
     }
 }
-/* 快速反应效果样式 */
-.fast-reaction-effect {
-    position: fixed;
-    transform: translateX(-50%);
-    color: #ffcc00;
-    font-size: 1.5rem;
-    font-weight: bold;
-    font-family: 'Uranus', sans-serif;
-    text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
-    z-index: 1000;
-    pointer-events: none;
-    opacity: 0;
-    white-space: nowrap;
-}
+/* 以下代码已被替换为.game-notification.floating-style，保留此注释以便于代码追踪 */
 
-.fast-reaction-effect.animate {
-    animation: fastReactionAnimation 1.5s ease-out forwards;
-}
-
-@keyframes fastReactionAnimation {
-    0% {
-        opacity: 0;
-        transform: translateX(-50%) translateY(0) scale(0.8);
-    }
-    20% {
-        opacity: 1;
-        transform: translateX(-50%) translateY(-20px) scale(1.2);
-    }
-    80% {
-        opacity: 1;
-        transform: translateX(-50%) translateY(-40px) scale(1);
-    }
-    100% {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-60px) scale(0.8);
-    }
-}
+/* 以下代码已被替换为@keyframes floatingAnimation，保留此注释以便于代码追踪 */
 /* 选项按钮出现动画 */
 @keyframes optionAppear {
   0% {

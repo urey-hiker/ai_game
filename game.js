@@ -739,7 +739,7 @@ function handleCorrectAnswer(button) {
         elements.sounds.nioce.play();
         
         // 显示快速反应提示
-        showFastReactionEffect(button);
+        showGameNotification('反应神速！', 'floating');
     }
 
     // 显示正确提示
@@ -821,7 +821,7 @@ function handleWrongAnswer(button) {
             }
         }
         
-        showBonusEffect('免疫生效！');
+        showGameNotification('免疫生效！', 'floating');
         return;
     }
 
@@ -906,7 +906,7 @@ function checkComboRewards() {
             applyComboReward(reward);
 
             // 显示奖励效果
-            showBonusEffect(reward.message);
+            showGameNotification(reward.message, 'bonus');
         }
     }
 }
@@ -1028,7 +1028,7 @@ function applyComboReward(reward) {
             updateGameUI();
             
             // 显示额外时间奖励提示
-            showBonusEffect(reward.message);
+            showGameNotification(reward.message, 'floating');
             break;
 
         case 'immunity':
@@ -1089,17 +1089,53 @@ function applyComboReward(reward) {
     }
 }
 
-// 显示奖励效果
-function showBonusEffect(message) {
-    const bonusEffect = document.createElement('div');
-    bonusEffect.className = 'bonus-effect';
-    bonusEffect.textContent = message;
-
-    elements.screens.game.appendChild(bonusEffect);
-
-    setTimeout(() => {
-        bonusEffect.remove();
-    }, 2000);
+// 显示游戏提示效果
+function showGameNotification(message, type = 'bonus') {
+    // 创建提示元素
+    const notification = document.createElement('div');
+    
+    if (type === 'bonus') {
+        // 中央大提示（原bonus-effect风格）
+        notification.className = 'game-notification bonus-style';
+        notification.textContent = message;
+        
+        // 添加到游戏屏幕
+        elements.screens.game.appendChild(notification);
+        
+        // 延迟移除元素
+        setTimeout(() => {
+            notification.remove();
+        }, 2000);
+    } else if (type === 'floating') {
+        // 浮动提示（原fast-reaction-effect风格）
+        notification.className = 'game-notification floating-style';
+        notification.textContent = message;
+        
+        // 设置初始位置（game-screen底部随机位置）
+        const gameScreen = elements.screens.game;
+        const gameRect = gameScreen.getBoundingClientRect();
+        
+        // 随机水平位置（留出边距，避免文字被截断）
+        const randomX = Math.random() * (gameRect.width - 200) + 100; // 100px边距
+        // 固定在game-screen底部
+        const bottomY = gameRect.height - 80; // 距离game-screen底部80px
+        
+        notification.style.left = `${randomX}px`;
+        notification.style.top = `${bottomY}px`;
+        
+        // 添加到游戏屏幕
+        elements.screens.game.appendChild(notification);
+        
+        // 添加动画类
+        setTimeout(() => {
+            notification.classList.add('animate');
+        }, 10);
+        
+        // 动画结束后移除元素
+        setTimeout(() => {
+            notification.remove();
+        }, 1500);
+    }
 }
 
 // 开始计时器
@@ -1141,7 +1177,7 @@ function checkLevelProgress() {
         increaseDifficulty();
 
         // 显示升级效果
-        showBonusEffect(`升级到第${gameState.level}关！`);
+        showGameNotification(`升级到第${gameState.level}关！`, 'bonus');
 
         // 更新UI
         updateGameUI();
@@ -1531,38 +1567,7 @@ function playComboYaySound(comboCount) {
         }
     }
 }
-// 显示快速反应效果
-function showFastReactionEffect(button) {
-    // 创建快速反应提示元素
-    const fastReactionEffect = document.createElement('div');
-    fastReactionEffect.className = 'fast-reaction-effect';
-    fastReactionEffect.textContent = '反应神速！';
-    
-    // 设置初始位置（game-screen底部随机位置）
-    const gameScreen = elements.screens.game;
-    const gameRect = gameScreen.getBoundingClientRect();
-    
-    // 随机水平位置（留出边距，避免文字被截断）
-    const randomX = Math.random() * (gameRect.width - 200) + gameRect.left + 100; // 100px边距
-    // 固定在game-screen底部
-    const bottomY = gameRect.bottom - 80; // 距离game-screen底部80px
-    
-    fastReactionEffect.style.left = `${randomX}px`;
-    fastReactionEffect.style.top = `${bottomY}px`;
-    
-    // 添加到文档
-    document.body.appendChild(fastReactionEffect);
-    
-    // 添加动画类
-    setTimeout(() => {
-        fastReactionEffect.classList.add('animate');
-    }, 10);
-    
-    // 动画结束后移除元素
-    setTimeout(() => {
-        fastReactionEffect.remove();
-    }, 1500);
-}
+// 此函数已被showGameNotification替代，保留此注释以便于代码追踪
 
 
 // 切换遮盖目标
