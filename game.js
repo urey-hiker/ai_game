@@ -1446,15 +1446,6 @@ const petManager = {
             return;
         }
         
-        // 如果达到最大数量且需要添加新宠物
-        if (currentCombo === this.maxPets && this.pets.length === this.maxPets) {
-            // 先随机移除一个宠物
-            this.removeRandomPet();
-            // 然后添加一个新宠物
-            this.addPet();
-            return;
-        }
-        
         // 如果需要添加宠物
         if (this.pets.length < targetCount) {
             const petsToAdd = targetCount - this.pets.length;
@@ -1534,30 +1525,14 @@ const petManager = {
         pet.classList.add('disappearing');
     },
     
-    // 随机移除一个宠物
-    removeRandomPet() {
-        if (this.pets.length === 0) return;
-        
-        // 随机选择一个宠物索引
-        const randomIndex = Math.floor(Math.random() * this.pets.length);
-        
-        // 获取该宠物
-        const pet = this.pets[randomIndex];
-        
-        // 从数组中移除
-        this.pets.splice(randomIndex, 1);
-        
-        // 添加消失动画
-        pet.classList.remove('sway1', 'sway2');
-        pet.classList.add('disappearing');
-    },
-    
     // 移除所有宠物
     removeAllPets() {
         // 为所有宠物添加消失动画
         this.pets.forEach(pet => {
-            pet.classList.remove('sway1', 'sway2');
-            pet.classList.add('disappearing');
+            setTimeout(() => {
+                pet.classList.remove('sway1', 'sway2');
+                pet.classList.add('disappearing');
+            }, Math.random() * 500);
         });
         
         // 清空宠物数组
