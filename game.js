@@ -6,9 +6,9 @@ const gameConfig = {
 
     // 连击奖励配置
     comboRewards: {
-        5: { type: 'doubleScore', duration: 3000, message: '双倍分数！' },
-        10: { type: 'extraTime', value: 2, message: '+2秒时间！' },
-        15: { type: 'immunity', value: 1, message: '错误免疫！' }
+        3: { type: 'doubleScore', duration: 5000, message: '双倍分数！' },
+        6: { type: 'immunity', value: 1, message: '错误免疫！' },
+        10: { type: 'extraTime', value: 2, message: '+2秒时间！' }
     },
 
     // 成就配置
@@ -32,6 +32,7 @@ window.gameState = {
     consecutiveErrors: 0,
     doubleScoreActive: false,
     immunityActive: false,
+    immunityCount: 0,
     unlockedAchievements: [],
     currentCorrectOption: null, // 用于基础难度下保存当前正确选项
     debugMode: false, // 调试模式开关
@@ -310,6 +311,7 @@ function startGame() {
     gameState.totalTime = 0;
     gameState.doubleScoreActive = false;
     gameState.immunityActive = false;
+    gameState.immunityCount = 0;
 
     // 重置统计数据
     gameState.totalClicks = 0;
@@ -782,20 +784,44 @@ function handleWrongAnswer(button) {
 
     // 如果有免疫，则不计错误
     if (gameState.immunityActive) {
-        gameState.immunityActive = false;
+        // 减少免疫次数
+        gameState.immunityCount--;
         
-        // 移除免疫图标
-        const immunityIcon = document.getElementById('immunity-reward');
-        if (immunityIcon) {
-            immunityIcon.classList.add('disappearing');
-            setTimeout(() => {
-                immunityIcon.remove();
-            }, 500);
+        // 如果免疫次数为0，关闭免疫状态
+        if (gameState.immunityCount <= 0) {
+            gameState.immunityActive = false;
+            
+            // 移除免疫图标
+            const immunityIcon = document.getElementById('immunity-reward');
+            if (immunityIcon) {
+                immunityIcon.classList.add('disappearing');
+                setTimeout(() => {
+                    immunityIcon.remove();
+                }, 500);
+            }
+        } else {
+            // 如果还有免疫次数，更新显示并添加抖动效果
+            const immunityIcon = document.getElementById('immunity-reward');
+            if (immunityIcon) {
+                // 更新免疫次数显示
+                const countElement = immunityIcon.querySelector('.immunity-count');
+                if (countElement) {
+                    countElement.textContent = gameState.immunityCount;
+                }
+                
+                // 添加抖动效果
+                immunityIcon.classList.add('shake');
+                setTimeout(() => {
+                    immunityIcon.classList.remove('shake');
+                }, 500);
+            }
         }
         
         showBonusEffect('免疫生效！');
         return;
     }
+
+    // 播放错误音效
 
     // 播放错误音效
     elements.sounds.wrong.currentTime = 0;
@@ -942,20 +968,54 @@ function applyComboReward(reward) {
             break;
 
         case 'immunity':
+            // 增加免疫次数
+            gameState.immunityCount += reward.value;
             gameState.immunityActive = true;
             
-            // 创建免疫图标
-            const immunityIcon = document.createElement('div');
-            immunityIcon.className = 'reward-icon';
-            immunityIcon.id = 'immunity-reward';
+            // 检查是否已有免疫图标
+            let immunityIcon = document.getElementById('immunity-reward');
             
-            // 添加盾牌图标
-            const shieldIcon = document.createElement('div');
-            shieldIcon.className = 'immunity-icon';
-            immunityIcon.appendChild(shieldIcon);
-            
-            // 添加到奖励容器
-            elements.game.rewardsContainer.appendChild(immunityIcon);
+            if (!immunityIcon) {
+                // 创建新的免疫图标
+                immunityIcon = document.createElement('div');
+                immunityIcon.className = 'reward-icon';
+                immunityIcon.id = 'immunity-reward';
+                
+                // 添加盾牌图标
+                const shieldIcon = document.createElement('div');
+                shieldIcon.className = 'immunity-icon';
+                immunityIcon.appendChild(shieldIcon);
+                
+                // 如果免疫次数大于1，添加计数器
+                if (gameState.immunityCount > 1) {
+                    const countElement = document.createElement('div');
+                    countElement.className = 'immunity-count';
+                    countElement.textContent = gameState.immunityCount;
+                    immunityIcon.appendChild(countElement);
+                }
+                
+                // 添加到奖励容器
+                elements.game.rewardsContainer.appendChild(immunityIcon);
+            } else {
+                // 更新现有免疫图标的计数
+                let countElement = immunityIcon.querySelector('.immunity-count');
+                
+                if (gameState.immunityCount > 1) {
+                    if (!countElement) {
+                        // 如果计数元素不存在但需要显示，创建它
+                        countElement = document.createElement('div');
+                        countElement.className = 'immunity-count';
+                        immunityIcon.appendChild(countElement);
+                    }
+                    countElement.textContent = gameState.immunityCount;
+                }
+                
+                // 添加闪烁效果表示更新
+                immunityIcon.classList.add('updated');
+                setTimeout(() => {
+                    immunityIcon.classList.remove('updated');
+                }, 500);
+            }
             break;
     }
 }
