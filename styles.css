@@ -1000,16 +1000,17 @@ body {
 
 .head-text {
     font-family: 'Uranus', sans-serif;
-    font-size: 3.5rem;
-    color: #ffffff;
+    font-size: 5rem;
+    color: #333333;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
     margin-right: 10px;
 }
 
 .r-text {
     font-family: 'Uranus', sans-serif;
-    font-size: 5rem;
+    font-size: 10rem;
     font-weight: bold;
+    font-style: italic;
     color: #ff3300;
     text-shadow: 
         0 0 10px rgba(255, 51, 0, 0.7),
