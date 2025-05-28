@@ -403,9 +403,9 @@ function startRound() {
     // 使用动态难度生成游戏内容
     generateDynamicRound();
 
-    // 关卡>=10时，2秒后开始间隔1秒切换遮盖目标
-    if (gameState.level >= 10) {
-        const coverCount = Math.min(8, Math.floor((gameState.level - 10) / 5) + 1);
+    // 关卡>=5时，1秒后开始间隔1秒切换遮盖目标
+    if (gameState.level >= 5) {
+        const coverCount = Math.min(8, Math.floor((gameState.level - 5) / 5) + 1);
         gameState.coverTimer = setTimeout(() => {
             // 首次遮盖
             switchCoverTargets(coverCount);
