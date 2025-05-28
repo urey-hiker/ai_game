@@ -315,6 +315,9 @@ function startGame() {
     gameState.correctClicks = 0;
     gameState.clickTimes = [];
     gameState.lastClickTime = 0;
+    
+    // 初始化宠物管理器
+    petManager.init();
 
     // 重置动态难度
     gameState.dynamicDifficulty = {
@@ -981,6 +984,9 @@ function updateGameUI() {
 
     // 更新连击指示器
     updateComboIndicator();
+    
+    // 更新宠物数量
+    petManager.updatePets();
 }
 
 // 更新连击指示器
@@ -1413,3 +1419,113 @@ function adjustOptionButtonTextSize() {
         button.style.lineHeight = '1.1';
     });
 }
+// 猫狗宠物管理
+const petManager = {
+    pets: [],
+    container: null,
+    maxPets: 30,
+    
+    // 初始化宠物容器
+    init() {
+        // 创建宠物容器
+        this.container = document.createElement('div');
+        this.container.className = 'pet-container';
+        elements.screens.game.appendChild(this.container);
+    },
+    
+    // 更新宠物数量与连击数一致
+    updatePets() {
+        const currentCombo = gameState.combo;
+        
+        // 限制最大数量
+        const targetCount = Math.min(currentCombo, this.maxPets);
+        
+        // 如果连击为0，移除所有宠物
+        if (currentCombo === 0) {
+            this.removeAllPets();
+            return;
+        }
+        
+        // 如果需要添加宠物
+        if (this.pets.length < targetCount) {
+            const petsToAdd = targetCount - this.pets.length;
+            for (let i = 0; i < petsToAdd; i++) {
+                this.addPet();
+            }
+        }
+        // 如果需要移除宠物
+        else if (this.pets.length > targetCount) {
+            const petsToRemove = this.pets.length - targetCount;
+            for (let i = 0; i < petsToRemove; i++) {
+                this.removePet();
+            }
+        }
+    },
+    
+    // 添加一个宠物
+    addPet() {
+        // 创建宠物元素
+        const pet = document.createElement('div');
+        pet.className = 'pet appearing';
+        
+        // 随机选择猫或狗
+        const isPetCat = Math.random() < 0.5;
+        pet.classList.add(isPetCat ? 'cat' : 'dog');
+        
+        // 随机水平翻转
+        if (Math.random() < 0.5) {
+            pet.classList.add('flipped');
+        }
+        
+        // 随机位置（在游戏区域底部10%范围内）
+        const gameRect = elements.screens.game.getBoundingClientRect();
+        const bottomArea = gameRect.height * 0.1;
+        const randomX = Math.random() * gameRect.width;
+        const randomY = gameRect.height - Math.random() * bottomArea;
+        
+        pet.style.left = `${randomX}px`;
+        pet.style.bottom = `${gameRect.height - randomY}px`;
+        
+        // 添加到容器
+        this.container.appendChild(pet);
+        
+        // 添加到宠物数组
+        this.pets.push(pet);
+        
+        // 动画结束后添加晃动效果
+        pet.addEventListener('animationend', (e) => {
+            if (e.animationName === 'petAppear') {
+                pet.classList.remove('appearing');
+                // 随机选择晃动动画
+                const swayClass = Math.random() < 0.5 ? 'sway1' : 'sway2';
+                pet.classList.add(swayClass);
+            } else if (e.animationName === 'petDisappear') {
+                pet.remove();
+            }
+        });
+    },
+    
+    // 移除一个宠物
+    removePet() {
+        if (this.pets.length === 0) return;
+        
+        // 获取最后一个宠物
+        const pet = this.pets.pop();
+        
+        // 添加消失动画
+        pet.classList.remove('sway1', 'sway2');
+        pet.classList.add('disappearing');
+    },
+    
+    // 移除所有宠物
+    removeAllPets() {
+        // 为所有宠物添加消失动画
+        this.pets.forEach(pet => {
+            pet.classList.remove('sway1', 'sway2');
+            pet.classList.add('disappearing');
+        });
+        
+        // 清空宠物数组
+        this.pets = [];
+    }
+};
