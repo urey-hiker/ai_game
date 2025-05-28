@@ -1446,6 +1446,15 @@ const petManager = {
             return;
         }
         
+        // 如果达到最大数量且需要添加新宠物
+        if (currentCombo === this.maxPets && this.pets.length === this.maxPets) {
+            // 先随机移除一个宠物
+            this.removeRandomPet();
+            // 然后添加一个新宠物
+            this.addPet();
+            return;
+        }
+        
         // 如果需要添加宠物
         if (this.pets.length < targetCount) {
             const petsToAdd = targetCount - this.pets.length;
@@ -1468,13 +1477,21 @@ const petManager = {
         const pet = document.createElement('div');
         pet.className = 'pet appearing';
         
-        // 随机选择猫或狗
-        const isPetCat = Math.random() < 0.5;
-        pet.classList.add(isPetCat ? 'cat' : 'dog');
-        
-        // 随机水平翻转
-        if (Math.random() < 0.5) {
-            pet.classList.add('flipped');
+        // 随机选择宠物类型（猫、狗、猫翻转、狗翻转）
+        const petType = Math.floor(Math.random() * 4);
+        switch (petType) {
+            case 0:
+                pet.classList.add('cat');
+                break;
+            case 1:
+                pet.classList.add('dog');
+                break;
+            case 2:
+                pet.classList.add('cat-flipped');
+                break;
+            case 3:
+                pet.classList.add('dog-flipped');
+                break;
         }
         
         // 随机位置（在游戏区域底部10%范围内）
@@ -1505,12 +1522,30 @@ const petManager = {
         });
     },
     
-    // 移除一个宠物
+    // 移除一个宠物（最后添加的）
     removePet() {
         if (this.pets.length === 0) return;
         
         // 获取最后一个宠物
         const pet = this.pets.pop();
+        
+        // 添加消失动画
+        pet.classList.remove('sway1', 'sway2');
+        pet.classList.add('disappearing');
+    },
+    
+    // 随机移除一个宠物
+    removeRandomPet() {
+        if (this.pets.length === 0) return;
+        
+        // 随机选择一个宠物索引
+        const randomIndex = Math.floor(Math.random() * this.pets.length);
+        
+        // 获取该宠物
+        const pet = this.pets[randomIndex];
+        
+        // 从数组中移除
+        this.pets.splice(randomIndex, 1);
         
         // 添加消失动画
         pet.classList.remove('sway1', 'sway2');

@@ -1202,8 +1202,12 @@ body {
     background-image: url('images/dog.png');
 }
 
-.pet.flipped {
-    transform: scaleX(-1);
+.pet.cat-flipped {
+    background-image: url('images/cat_flipped.png');
+}
+
+.pet.dog-flipped {
+    background-image: url('images/dog_flipped.png');
 }
 
 .pet.appearing {
