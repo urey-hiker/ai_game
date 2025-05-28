@@ -992,6 +992,11 @@ function applyComboReward(reward) {
                 
                 // 添加到奖励容器
                 elements.game.rewardsContainer.appendChild(doubleScoreIcon);
+
+                doubleScoreIcon.classList.add('appearing');
+                setTimeout(() => {
+                    doubleScoreIcon.classList.remove('appearing');
+                }, 500);
                 
                 // 记录开始时间
                 const startTime = Date.now();
@@ -1055,6 +1060,11 @@ function applyComboReward(reward) {
                 
                 // 添加到奖励容器
                 elements.game.rewardsContainer.appendChild(immunityIcon);
+
+                immunityIcon.classList.add('appearing');
+                setTimeout(() => {
+                    immunityIcon.classList.remove('appearing');
+                }, 500);
             } else {
                 // 更新现有免疫图标的计数
                 let countElement = immunityIcon.querySelector('.immunity-count');
