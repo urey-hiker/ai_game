@@ -262,7 +262,6 @@ function setupEventListeners() {
     });
     elements.buttons.showAchievements.addEventListener('click', () => {
         elements.sounds.click.play();
-        loadSavedData();
         renderAchievements();
         showScreen('achievements');
     });
@@ -1386,7 +1385,7 @@ function updateResultScreen() {
     elements.result.finalScore.textContent = gameState.score;
     elements.result.maxCombo.textContent = gameState.maxCombo;
     elements.result.clearedLevels.textContent = gameState.clearedLevels;
-    elements.result.unlockedContainer.innerHTML = '';
+    // elements.result.unlockedContainer.innerHTML = '';
 
     // 计算并显示正确率
     const accuracy = gameState.totalClicks > 0
