@@ -989,3 +989,13 @@ function saveGameData() {
   - 在`game.js`中将`showThomasEasterEgg`函数暴露到window对象
   - 保留了原有的点击计数逻辑，连续点击5次仍然会触发debug模式
 - 这个改进增强了游戏的趣味性，为用户提供了更多发现彩蛋的方式
+### 2025-05-29 调整Thomas彩蛋触发逻辑
+- 修改了Thomas彩蛋的触发逻辑：
+  - 移除了单击"R"字母时显示Thomas彩蛋的功能
+  - 调整为只有在debug模式开启时才显示Thomas彩蛋
+  - 现在无论是通过Ctrl+D还是连续点击"R"五次开启debug模式，都会触发彩蛋
+- 实现细节：
+  - 从`handleRClick()`函数中移除了对`showThomasEasterEgg()`的直接调用
+  - 在`toggleGameDebugMode()`函数中添加了条件判断，只有在开启debug模式时才显示彩蛋
+  - 保持了代码的复用性，两种触发方式共用同一套逻辑
+- 这个调整使彩蛋的触发更加合理，与debug模式的状态保持一致

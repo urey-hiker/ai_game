@@ -66,11 +66,6 @@ function handleRClick() {
         clickSound.play();
     }
     
-    // 显示Thomas彩蛋
-    if (typeof window.showThomasEasterEgg === 'function') {
-        window.showThomasEasterEgg();
-    }
-    
     // 增加点击计数
     rClickCount++;
     
@@ -106,6 +101,11 @@ function toggleGameDebugMode() {
     
     // 切换调试模式
     window.gameState.debugMode = !window.gameState.debugMode;
+    
+    // 如果开启了调试模式，显示Thomas彩蛋
+    if (window.gameState.debugMode && typeof window.showThomasEasterEgg === 'function') {
+        window.showThomasEasterEgg();
+    }
     
     // 显示调试模式状态
     const message = window.gameState.debugMode ? '调试模式已开启！所有点击都将视为正确' : '调试模式已关闭';
