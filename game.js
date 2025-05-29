@@ -1020,7 +1020,6 @@ function applyComboReward(reward) {
                 // 设置新的定时器结束双倍分数
                 gameState.doubleScoreTimeout = setTimeout(() => {
                     gameState.doubleScoreActive = false;
-                    clearInterval(gameState.doubleScoreInterval);
                 }, newDuration);
             } else {
                 // 如果不存在，创建新的双倍分数奖励
@@ -1071,7 +1070,6 @@ function applyComboReward(reward) {
                 // 设置定时器结束双倍分数
                 gameState.doubleScoreTimeout = setTimeout(() => {
                     gameState.doubleScoreActive = false;
-                    clearInterval(gameState.doubleScoreInterval);
                 }, reward.duration);
             }
             break;
