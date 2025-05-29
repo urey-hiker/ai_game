@@ -201,10 +201,39 @@ function setupDebugMode() {
             // 显示调试模式状态
             const message = gameState.debugMode ? '调试模式已开启！所有点击都将视为正确' : '调试模式已关闭';
             showDebugMessage(message);
+            
+            // 如果开启了调试模式，显示Thomas彩蛋
+            if (gameState.debugMode) {
+                showThomasEasterEgg();
+            }
 
             console.log('Debug mode:', gameState.debugMode);
         }
     });
+}
+
+// 显示Thomas彩蛋
+function showThomasEasterEgg() {
+    // 创建Thomas彩蛋元素
+    const thomasElement = document.createElement('div');
+    thomasElement.className = 'thomas-easter-egg';
+    document.body.appendChild(thomasElement);
+    
+    // 延迟一点显示，以便CSS过渡效果生效
+    setTimeout(() => {
+        thomasElement.classList.add('show');
+        
+        // 1秒后开始淡出
+        setTimeout(() => {
+            thomasElement.classList.add('hide');
+            thomasElement.classList.remove('show');
+            
+            // 淡出动画完成后移除元素
+            setTimeout(() => {
+                thomasElement.remove();
+            }, 500);
+        }, 1000);
+    }, 100);
 }
 
 // 显示调试信息
