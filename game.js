@@ -140,8 +140,21 @@ function setupClickToContinue() {
             // 播放主菜单音乐
             playHomeMusic();
 
-            // 显示菜单选项
+            // 显示菜单选项并添加动画
             menuOptions.style.display = 'flex';
+            
+            // 为每个按钮添加延迟出现的动画
+            const buttons = menuOptions.querySelectorAll('.btn');
+            buttons.forEach((button, index) => {
+                button.style.opacity = '0';
+                button.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    button.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    button.style.opacity = '1';
+                    button.style.transform = 'translateY(0)';
+                }, 100 * (index + 1)); // 每个按钮延迟100ms * index出现
+            });
 
             // 隐藏点击提示层
             clickOverlay.style.display = 'none';
