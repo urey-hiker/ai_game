@@ -132,7 +132,7 @@ body {
 
 /* 屏幕样式 */
 .screen {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
