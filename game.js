@@ -8,7 +8,7 @@ const gameConfig = {
     comboRewards: {
         3: { type: 'doubleScore', duration: 5000, message: '双倍分数！' },
         6: { type: 'immunity', value: 1, message: '错误免疫！' },
-        10: { type: 'extraTime', value: 2, message: '+2秒时间！' }
+        10: { type: 'extraTime', value: 5, message: '+5秒时间！' }
     },
 
     // 成就配置
@@ -338,7 +338,7 @@ function startGame() {
     };
 
     // 设置初始时间
-    gameState.time = 300; // 初始时间设置为30秒
+    gameState.time = 30; // 初始时间设置为30秒
 
     // 更新UI
     updateGameUI();
@@ -1182,6 +1182,15 @@ function checkLevelProgress() {
 
         // 增加时间奖励
         gameState.time += 5;
+
+        // 添加时间数字弹跳动画
+        const timeElement = elements.game.time;
+        timeElement.classList.add('number-bounce');
+        
+        // 动画结束后移除类
+        setTimeout(() => {
+            timeElement.classList.remove('number-bounce');
+        }, 600);
 
         // 增加难度
         increaseDifficulty();

@@ -37,7 +37,7 @@ function createTitleElements() {
     // 创建"头文字"元素
     headTextDiv = document.createElement('div');
     headTextDiv.className = 'head-text';
-    headTextDiv.textContent = '头文字';
+    headTextDiv.innerHTML = '<em>头文字</em>';
     titleWrapper.appendChild(headTextDiv);
     
     // 创建"R"元素
