@@ -66,6 +66,11 @@ function handleRClick() {
         clickSound.play();
     }
     
+    // 显示Thomas彩蛋
+    if (typeof window.showThomasEasterEgg === 'function') {
+        window.showThomasEasterEgg();
+    }
+    
     // 增加点击计数
     rClickCount++;
     

@@ -255,6 +255,7 @@ function showDebugMessage(message) {
 
 // 导出调试消息函数，供其他模块使用
 window.showDebugMessage = showDebugMessage;
+window.showThomasEasterEgg = showThomasEasterEgg;
 
 // 加载保存的游戏数据
 function loadSavedData() {

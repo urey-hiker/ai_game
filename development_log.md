@@ -979,3 +979,13 @@ function saveGameData() {
   - 使用CSS过渡效果实现淡入淡出动画
   - 通过定时器控制显示时间和移除元素
 - 这个小彩蛋为开发者和测试人员提供了一个有趣的惊喜
+### 2025-05-29 扩展Thomas彩蛋触发方式
+- 增加了Thomas彩蛋的触发方式：
+  - 除了按下Ctrl+D开启debug模式时显示外，现在点击标题中的"R"字母也会触发彩蛋
+  - 复用了现有的`showThomasEasterEgg()`函数，避免代码重复
+  - 通过将函数暴露到window对象，实现了跨文件调用
+- 实现细节：
+  - 在`title2d.js`的`handleRClick()`函数中添加了对`window.showThomasEasterEgg()`的调用
+  - 在`game.js`中将`showThomasEasterEgg`函数暴露到window对象
+  - 保留了原有的点击计数逻辑，连续点击5次仍然会触发debug模式
+- 这个改进增强了游戏的趣味性，为用户提供了更多发现彩蛋的方式
