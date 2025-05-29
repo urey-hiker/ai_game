@@ -1529,8 +1529,8 @@ body {
 /* Thomas彩蛋样式 */
 .thomas-easter-egg {
     position: fixed;
-    bottom: 5vh;
-    right: calc(50% - 250px);
+    bottom: 0px;
+    right: 0px;
     width: 150px;
     height: 150px;
     background-image: url('images/thomas.png');
