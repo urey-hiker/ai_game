@@ -115,6 +115,10 @@ const elements = {
 function preloadImages() {
     const imageList = [
         'images/background.png',
+        'images/background2.png',
+        'images/background3.png',
+        'images/background4.png',
+        'images/background5.png',
         'images/optionBtn.png',
         'images/whiteBtn.png',
         'images/mascot-normal.png',
@@ -313,6 +317,22 @@ function showScreen(screenName) {
     if (gameState.timerInterval) {
         clearInterval(gameState.timerInterval);
         gameState.timerInterval = null;
+    }
+
+    // 当离开游戏屏幕时，清理所有奖励定时器
+    if (gameState.currentScreen === 'game' && screenName !== 'game') {
+        if (gameState.doubleScoreInterval) {
+            clearInterval(gameState.doubleScoreInterval);
+            gameState.doubleScoreInterval = null;
+        }
+        if (gameState.doubleScoreTimeout) {
+            clearTimeout(gameState.doubleScoreTimeout);
+            gameState.doubleScoreTimeout = null;
+        }
+        // 重置奖励状态
+        gameState.doubleScoreActive = false;
+        gameState.immunityActive = false;
+        gameState.immunityCount = 0;
     }
 
     // 处理音乐切换
@@ -1483,7 +1503,13 @@ document.documentElement.addEventListener("gesturestart", function (event) {
     event.preventDefault();
 });
 // 初始化游戏
-document.addEventListener('DOMContentLoaded', initGame);
+document.addEventListener('DOMContentLoaded', function() {
+    // 设置随机背景
+    setRandomBackground();
+    
+    // 初始化游戏
+    initGame();
+});
 // 根据选项数量调整容器的列数
 function adjustOptionsContainerColumns(optionsCount) {
     const container = elements.game.optionsContainer;
@@ -1804,3 +1830,22 @@ const petManager = {
         this.pets = [];
     }
 };
+
+// 随机选择背景图片
+function setRandomBackground() {
+    const backgrounds = [
+        'images/background.png',
+        'images/background2.png',
+        'images/background3.png',
+        'images/background4.png',
+        'images/background5.png'
+    ];
+    
+    // 随机选择一个背景
+    const randomIndex = Math.floor(Math.random() * backgrounds.length);
+    const selectedBackground = backgrounds[randomIndex];
+    
+    // 应用到游戏容器
+    const gameContainer = document.querySelector('.game-container');
+    gameContainer.style.backgroundImage = `url('${selectedBackground}')`;
+}
