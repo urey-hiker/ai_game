@@ -209,7 +209,7 @@ body {
 
 /* 规则界面样式 */
 .rules-content {
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.2);
     padding: 20px;
     border-radius: var(--border-radius);
     margin: 20px 0;
@@ -992,7 +992,7 @@ body {
 .gameplay-example {
     margin: 20px 0;
     padding: 15px;
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(255, 255, 255, 0.2);
     border-radius: 10px;
     border: 2px solid var(--secondary-color);
 }
