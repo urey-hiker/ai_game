@@ -111,8 +111,28 @@ const elements = {
     }
 };
 
+// 预加载图片资源
+function preloadImages() {
+    const imageList = [
+        'images/background.png',
+        'images/optionBtn.png',
+        'images/whiteBtn.png',
+        'images/mascot-normal.png',
+        'images/cat.png',
+        'images/cat_flipped.png',
+        'images/dog.png',
+        'images/dog_flipped.png',
+        // 如有其他图片请补充
+    ];
+    imageList.forEach(src => {
+        const img = new Image();
+        img.src = src;
+    });
+}
+
 // 初始化游戏
 function initGame() {
+    preloadImages();
     loadSavedData();
     setupEventListeners();
     setupDebugMode();
