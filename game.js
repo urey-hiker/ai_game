@@ -114,11 +114,11 @@ const elements = {
 // 预加载图片资源
 function preloadImages() {
     const imageList = [
-        'images/background.png',
-        'images/background2.png',
-        'images/background3.png',
-        'images/background4.png',
-        'images/background5.png',
+        'images/background-min.png',
+        'images/background2-min.png',
+        'images/background3-min.png',
+        'images/background4-min.png',
+        'images/background5-min.png',
         'images/optionBtn.png',
         'images/whiteBtn.png',
         'images/mascot-normal.png',
@@ -646,8 +646,6 @@ function generateAdvancedRound() {
 }
 
 // 创建选项按钮
-
-// 创建选项按钮
 function createOptionButton(color, text, isDistractor, mode) {
     const button = document.createElement('button');
     button.className = 'option-btn appearing';
@@ -877,8 +875,6 @@ function handleWrongAnswer(button) {
         showGameNotification('免疫生效！', 'floating');
         return;
     }
-
-    // 播放错误音效
 
     // 播放错误音效
     elements.sounds.wrong.currentTime = 0;
@@ -1833,11 +1829,11 @@ const petManager = {
 // 随机选择背景图片
 function setRandomBackground() {
     const backgrounds = [
-        'images/background.png',
-        'images/background2.png',
-        'images/background3.png',
-        'images/background4.png',
-        'images/background5.png'
+        'images/background-min.png',
+        'images/background2-min.png',
+        'images/background3-min.png',
+        'images/background4-min.png',
+        'images/background5-min.png'
     ];
     
     // 随机选择一个背景
