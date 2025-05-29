@@ -405,7 +405,6 @@ body {
 .unlocked-item {
     margin: 15px 0;
     padding: 10px;
-    background-color: var(--accent-color);
     border-radius: var(--border-radius);
     font-weight: bold;
     color: white;
@@ -1463,4 +1462,9 @@ body {
 
 .menu-options .btn-primary {
     animation: pulse 2s infinite;
+}
+.pixel-font {
+    font-family: 'Uranus', sans-serif !important;
+    letter-spacing: 1px;
+    image-rendering: pixelated;
 }
