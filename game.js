@@ -262,6 +262,8 @@ function setupEventListeners() {
     });
     elements.buttons.showAchievements.addEventListener('click', () => {
         elements.sounds.click.play();
+        loadSavedData();
+        renderAchievements();
         showScreen('achievements');
     });
     
