@@ -437,6 +437,18 @@ body {
 }
 
 /* 成就界面样式 */
+.achievements-screen {
+    font-family: 'Uranus', sans-serif;
+}
+
+.achievements-screen h2 {
+    font-family: 'Uranus', sans-serif;
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
 .achievements-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -445,6 +457,7 @@ body {
     max-height: 70%;
     overflow-y: auto;
     padding: 10px;
+    font-family: 'Uranus', sans-serif;
 }
 
 .achievement-item {
@@ -453,6 +466,33 @@ body {
     padding: 15px;
     display: flex;
     flex-direction: column;
+    font-family: 'Uranus', sans-serif;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.achievement-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.achievement-item h3 {
+    margin: 5px 0;
+    color: var(--primary-color);
+    font-size: 1.3rem;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.achievement-item p {
+    margin: 5px 0;
+    font-size: 1.1rem;
+    color: var(--dark-color);
+}
+
+.achievement-locked {
+    opacity: 0.6;
+    filter: grayscale(0.8);
+}
     align-items: center;
 }
 
@@ -1468,4 +1508,31 @@ body {
     font-family: 'Uranus', sans-serif !important;
     letter-spacing: 1px;
     image-rendering: pixelated;
+}
+.achievement-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.achievement-unlocked-tag {
+    margin-top: 10px;
+    padding: 5px;
+    background-color: #4ecdc4;
+    color: white;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.9rem;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.achievement-locked-tag {
+    margin-top: 10px;
+    padding: 5px;
+    background-color: #aaaaaa;
+    color: white;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.9rem;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
 }

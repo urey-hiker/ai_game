@@ -1437,6 +1437,7 @@ function renderAchievements() {
             <div class="achievement-icon">🏆</div>
             <h3>${achievement.name}</h3>
             <p>${achievement.description}</p>
+            ${isUnlocked ? '<div class="achievement-unlocked-tag">已解锁</div>' : '<div class="achievement-locked-tag">未解锁</div>'}
         `;
 
         achievementsContainer.appendChild(achievementElement);
