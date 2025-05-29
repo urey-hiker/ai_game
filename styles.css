@@ -117,11 +117,6 @@ body {
     font-size: 1.5rem;
 }
 
-.btn-back {
-    position: absolute;
-    bottom: 20px;
-}
-
 .btn-difficulty {
     width: 80%;
     margin: 15px auto;
@@ -1344,6 +1339,9 @@ body {
 
 .pet.sway2 {
     animation: optionSwayBounce2 1.12s infinite ease-in-out;
+}
+#rules-screen, #achievements-screen {
+    position: fixed;
 }
 #rules-screen h2 {
     font-family: 'Uranus', sans-serif;
