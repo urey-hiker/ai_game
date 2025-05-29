@@ -215,10 +215,12 @@ function setupDebugMode() {
 
 // 显示Thomas彩蛋
 function showThomasEasterEgg() {
+    // 应用到游戏容器
+    const gameContainer = document.querySelector('.game-container');
     // 创建Thomas彩蛋元素
     const thomasElement = document.createElement('div');
     thomasElement.className = 'thomas-easter-egg';
-    document.body.appendChild(thomasElement);
+    gameContainer.appendChild(thomasElement);
     
     // 延迟一点显示，以便CSS过渡效果生效
     setTimeout(() => {

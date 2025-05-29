@@ -1549,3 +1549,9 @@ body {
 .thomas-easter-egg.hide {
     opacity: 0;
 }
+
+@media (width > 500px) {
+    .thomas-easter-egg {
+        position: absolute;
+    }
+}
