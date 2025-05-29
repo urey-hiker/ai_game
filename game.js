@@ -126,6 +126,7 @@ function preloadImages() {
         'images/cat_flipped.png',
         'images/dog.png',
         'images/dog_flipped.png',
+        'images/thomas.png',
         // 如有其他图片请补充
     ];
     imageList.forEach(src => {
