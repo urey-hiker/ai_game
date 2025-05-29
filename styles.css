@@ -1340,7 +1340,7 @@ body {
 .pet.sway2 {
     animation: optionSwayBounce2 1.12s infinite ease-in-out;
 }
-#rules-screen, #achievements-screen {
+#rules-screen {
     position: fixed;
 }
 #rules-screen h2 {
