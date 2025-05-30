@@ -41,7 +41,7 @@ body {
     max-width: 500px;
     height: 90vh;
     max-height: 800px;
-    background: url('images/background-min.png') no-repeat center center;
+    /* background: url('images/background-min.png') no-repeat center center; */
     background-size: cover;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
@@ -1519,13 +1519,30 @@ body {
     max-width: 90vw;
 }
 #ad-video {
-    display: block;
-    margin: 24px auto 16px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     max-width: 90vw;
     max-height: 50vh;
+    width: 100%;
+    height: auto;
     border-radius: 12px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.18);
     background: #000;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+}
+#ad-video img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    display: block;
+    box-sizing: border-box;
+    padding: 0;
+    border: none;
 }
 .ad-modal-buttons {
     display: flex;

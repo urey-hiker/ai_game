@@ -115,11 +115,6 @@ const elements = {
 // 预加载图片资源
 function preloadImages() {
     const imageList = [
-        'images/background-min.png',
-        'images/background2-min.png',
-        'images/background3-min.png',
-        'images/background4-min.png',
-        'images/background5-min.png',
         'images/optionBtn.png',
         'images/whiteBtn.png',
         'images/mascot-normal.png',
@@ -1409,12 +1404,17 @@ function showAdModal() {
     const giveUpBtn = document.getElementById('give-up-btn');
     const adVideo = document.getElementById('ad-video');
 
-    // 设置视频源（兼容之前的结构变更）
-    if (adVideo && adVideo.children.length === 0) {
-        const source = document.createElement('source');
-        source.src = 'advertisement/advertisement.mp4';
-        source.type = 'video/mp4';
-        adVideo.appendChild(source);
+    // 新增：尝试用webp动图替换mp4
+    if (adVideo) {
+        // 清空原有内容
+        adVideo.innerHTML = '';
+        const webpImg = document.createElement('img');
+        webpImg.src = 'advertisement/advertisement.webp';
+        webpImg.alt = '广告';
+        webpImg.style.maxWidth = '100%';
+        webpImg.style.maxHeight = '50vh';
+        webpImg.style.display = 'none';
+        adVideo.appendChild(webpImg);
     }
 
     if (!adModal || !watchAdBtn || !giveUpBtn || !adVideo) {
@@ -1428,23 +1428,36 @@ function showAdModal() {
 
     // 显示弹窗
     adModal.style.display = 'flex';
-    adVideo.style.display = 'none';
-    adVideo.pause();
-    adVideo.currentTime = 0;
+    if (adVideo) adVideo.style.display = 'none';
+    if (adVideo && adVideo.firstChild) adVideo.firstChild.style.display = 'none';
     watchAdBtn.style.display = '';
     giveUpBtn.style.display = '';
 
     // 解绑旧事件，防止多次绑定
     watchAdBtn.onclick = null;
     giveUpBtn.onclick = null;
-    adVideo.onended = null;
+    if (adVideo) adVideo.onended = null;
 
     // 观看广告按钮
     watchAdBtn.onclick = function() {
         watchAdBtn.disabled = true;
         giveUpBtn.disabled = true;
-        adVideo.style.display = 'block';
-        adVideo.play();
+        if (adVideo && adVideo.firstChild) {
+            // 动态计算宽高，适配移动端
+            const modalContent = adModal.querySelector('.ad-modal-content');
+            const maxW = Math.min(window.innerWidth * 0.9, 400);
+            const maxH = Math.min(window.innerHeight * 0.5, 225);
+            adVideo.style.maxWidth = maxW + 'px';
+            adVideo.style.maxHeight = maxH + 'px';
+            adVideo.style.width = '100%';
+            adVideo.style.height = 'auto';
+            if (modalContent) {
+                modalContent.style.maxWidth = maxW + 'px';
+                modalContent.style.maxHeight = (maxH + 80) + 'px';
+            }
+            adVideo.style.display = 'block';
+            adVideo.firstChild.style.display = 'block';
+        }
         watchAdBtn.style.display = 'none';
         giveUpBtn.style.display = 'none';
         // 隐藏标题和提示
@@ -1452,8 +1465,8 @@ function showAdModal() {
         const adTip = adModal.querySelector('p');
         if (adTitle) adTitle.style.display = 'none';
         if (adTip) adTip.style.display = 'none';
-        // 广告播放完毕后，奖励10秒
-        adVideo.onended = function() {
+        // webp动图5秒后关闭
+        setTimeout(() => {
             adModal.style.display = 'none';
             // 奖励10秒
             gameState.time = Math.max(10, gameState.time + 10);
@@ -1467,7 +1480,7 @@ function showAdModal() {
             // 恢复标题和提示
             if (adTitle) adTitle.style.display = '';
             if (adTip) adTip.style.display = '';
-        };
+        }, 5000);
     };
     // 放弃按钮
     giveUpBtn.onclick = function() {
@@ -1959,11 +1972,12 @@ function setRandomBackground() {
         'images/background4-min.png',
         'images/background5-min.png'
     ];
-    
     // 随机选择一个背景
     const randomIndex = Math.floor(Math.random() * backgrounds.length);
     const selectedBackground = backgrounds[randomIndex];
-    
+    // 只预加载选中的背景
+    const img = new Image();
+    img.src = selectedBackground;
     // 应用到游戏容器
     const gameContainer = document.querySelector('.game-container');
     gameContainer.style.backgroundImage = `url('${selectedBackground}')`;
