@@ -1004,3 +1004,12 @@ function saveGameData() {
   - 在`preloadImages()`函数中添加了`'images/thomas.png'`
   - 确保彩蛋图片在需要时能立即显示，不会出现加载延迟
 - 这个小更新提高了用户体验，使彩蛋功能更加流畅
+### 2025-05-30 清理未使用的图片资源
+- 发现项目中存在未使用的原始大尺寸背景图片：
+  - background.png
+  - background2.png
+  - background3.png
+  - background4.png
+  - background5.png
+- 这些图片已经有对应的压缩版本(-min.png)在使用，原始版本可以安全移除
+- 移除这些未使用的图片可以减少项目体积，提高加载速度和版本控制效率
