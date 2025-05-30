@@ -394,6 +394,9 @@ function startGame() {
     // 设置初始时间
     gameState.time = 30; // 初始时间设置为30秒
 
+    // 重置广告弹窗标记，允许新一局再看广告
+    gameState._adModalShown = false;
+
     // 更新UI
     updateGameUI();
 
@@ -1410,23 +1413,28 @@ function showAdModal() {
         giveUpBtn.disabled = true;
         adVideo.style.display = 'block';
         adVideo.play();
-        // 广告播放时，按钮只显示"直接结束"
         watchAdBtn.style.display = 'none';
-        giveUpBtn.style.display = '';
+        giveUpBtn.style.display = 'none';
+        // 隐藏标题和提示
+        const adTitle = adModal.querySelector('h3');
+        const adTip = adModal.querySelector('p');
+        if (adTitle) adTitle.style.display = 'none';
+        if (adTip) adTip.style.display = 'none';
         // 广告播放完毕后，奖励10秒
         adVideo.onended = function() {
             adModal.style.display = 'none';
             // 奖励10秒
             gameState.time = Math.max(10, gameState.time + 10);
             updateGameUI();
-            // 不允许再次弹窗（即再失败直接结束）
-            // gameState._adModalShown = false; // 注释掉这行
             // 重新开始计时
             startTimer();
             // 恢复按钮
             watchAdBtn.disabled = false;
             giveUpBtn.disabled = false;
             watchAdBtn.style.display = '';
+            // 恢复标题和提示
+            if (adTitle) adTitle.style.display = '';
+            if (adTip) adTip.style.display = '';
         };
     };
     // 放弃按钮
