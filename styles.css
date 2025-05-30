@@ -1494,6 +1494,78 @@ body {
 .menu-options .btn-primary {
     animation: pulse 2s infinite;
 }
+
+/* 广告弹窗样式 */
+.ad-modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.65);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.ad-modal-content {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    padding: 32px 24px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 340px;
+    max-width: 90vw;
+}
+#ad-video {
+    display: block;
+    margin: 24px auto 16px auto;
+    max-width: 90vw;
+    max-height: 50vh;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+    background: #000;
+}
+.ad-modal-buttons {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 12px;
+}
+.ad-modal-buttons .btn {
+    margin: 0 12px;
+    min-width: 120px;
+    font-size: 1.1rem;
+}
+@media (max-width: 600px) {
+  .ad-modal-content {
+    min-width: 0;
+    padding: 16px 4vw 16px 4vw;
+  }
+  #ad-video {
+    width: 96vw !important;
+    height: auto !important;
+    max-height: 32vh;
+  }
+}
+
+.ad-modal-content h3, .ad-modal-content p {
+    font-family: 'Uranus', sans-serif;
+    color: var(--dark-color);
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 12px;
+}
+.ad-modal-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+}
+.ad-modal-content p {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-bottom: 18px;
+}
 .pixel-font {
     font-family: 'Uranus', sans-serif !important;
     letter-spacing: 1px;
