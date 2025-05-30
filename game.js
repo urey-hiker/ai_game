@@ -49,7 +49,8 @@ window.gameState = {
         nextLevelThreshold: 70 // 下一级难度的分数阈值
     },
     coverTimer: null, // 遮盖定时器
-    coverInterval: null // 遮盖间隔定时器
+    coverInterval: null, // 遮盖间隔定时器
+    _adModalShown: false // 新增广告弹窗标记
 };
 
 // DOM元素引用
@@ -1361,6 +1362,18 @@ function updateComboIndicator() {
 
 // 结束游戏
 function endGame() {
+    // 检查是否已经弹出过广告机会，防止多次弹窗
+    if (gameState._adModalShown) {
+        // 如果已经看过一次广告，直接结束
+        actuallyEndGame();
+        return;
+    }
+    // 弹出广告选择弹窗
+    showAdModal();
+}
+
+// 真正的结束流程，原endGame内容迁移到这里
+function actuallyEndGame() {
     // 停止计时器
     if (gameState.timerInterval) {
         clearInterval(gameState.timerInterval);
@@ -1384,6 +1397,75 @@ function endGame() {
 
     // 显示结果界面
     showScreen('result');
+}
+
+// 弹出广告选择弹窗
+function showAdModal() {
+    const adModal = document.getElementById('ad-modal');
+    const watchAdBtn = document.getElementById('watch-ad-btn');
+    const giveUpBtn = document.getElementById('give-up-btn');
+    const adVideo = document.getElementById('ad-video');
+
+    // 设置视频源（兼容之前的结构变更）
+    if (adVideo && adVideo.children.length === 0) {
+        const source = document.createElement('source');
+        source.src = 'advertisement/advertisement.mp4';
+        source.type = 'video/mp4';
+        adVideo.appendChild(source);
+    }
+
+    if (!adModal || !watchAdBtn || !giveUpBtn || !adVideo) {
+        // 兜底，直接结束
+        actuallyEndGame();
+        return;
+    }
+
+    // 标记已弹出，防止多次弹窗
+    gameState._adModalShown = true;
+
+    // 显示弹窗
+    adModal.style.display = 'flex';
+    adVideo.style.display = 'none';
+    adVideo.pause();
+    adVideo.currentTime = 0;
+    watchAdBtn.style.display = '';
+    giveUpBtn.style.display = '';
+
+    // 解绑旧事件，防止多次绑定
+    watchAdBtn.onclick = null;
+    giveUpBtn.onclick = null;
+    adVideo.onended = null;
+
+    // 观看广告按钮
+    watchAdBtn.onclick = function() {
+        watchAdBtn.disabled = true;
+        giveUpBtn.disabled = true;
+        adVideo.style.display = 'block';
+        adVideo.play();
+        // 广告播放时，按钮只显示"直接结束"
+        watchAdBtn.style.display = 'none';
+        giveUpBtn.style.display = '';
+        // 广告播放完毕后，奖励10秒
+        adVideo.onended = function() {
+            adModal.style.display = 'none';
+            // 奖励10秒
+            gameState.time = Math.max(10, gameState.time + 10);
+            updateGameUI();
+            // 不允许再次弹窗（即再失败直接结束）
+            // gameState._adModalShown = false; // 注释掉这行
+            // 重新开始计时
+            startTimer();
+            // 恢复按钮
+            watchAdBtn.disabled = false;
+            giveUpBtn.disabled = false;
+            watchAdBtn.style.display = '';
+        };
+    };
+    // 放弃按钮
+    giveUpBtn.onclick = function() {
+        adModal.style.display = 'none';
+        actuallyEndGame();
+    };
 }
 
 // 检查成就
