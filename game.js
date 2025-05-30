@@ -115,11 +115,6 @@ const elements = {
 // 预加载图片资源
 function preloadImages() {
     const imageList = [
-        'images/background-min.png',
-        'images/background2-min.png',
-        'images/background3-min.png',
-        'images/background4-min.png',
-        'images/background5-min.png',
         'images/optionBtn.png',
         'images/whiteBtn.png',
         'images/mascot-normal.png',
@@ -1959,11 +1954,12 @@ function setRandomBackground() {
         'images/background4-min.png',
         'images/background5-min.png'
     ];
-    
     // 随机选择一个背景
     const randomIndex = Math.floor(Math.random() * backgrounds.length);
     const selectedBackground = backgrounds[randomIndex];
-    
+    // 只预加载选中的背景
+    const img = new Image();
+    img.src = selectedBackground;
     // 应用到游戏容器
     const gameContainer = document.querySelector('.game-container');
     gameContainer.style.backgroundImage = `url('${selectedBackground}')`;
