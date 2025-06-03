@@ -2019,179 +2019,85 @@ function startAdvancedGame() {
     const board = document.querySelector('.advanced-board');
     if (!board) return;
     board.innerHTML = '';
-    // 生成九宫格
+    // 生成九宫格，每格一个栈
     const grid = [];
     for (let r = 0; r < advancedConfig.rows; r++) {
         const row = [];
         for (let c = 0; c < advancedConfig.cols; c++) {
-            // 每格一叠牌
+            // 每格一叠牌，栈底到栈顶
             const stack = [];
             for (let i = 0; i < advancedConfig.stackCount; i++) {
-                // 随机颜色+随机字，允许颜色和字不一致
                 const texts = Object.keys(advancedConfig.textMap);
                 const text = texts[Math.floor(Math.random() * texts.length)];
                 let color;
                 do {
                     color = Object.values(advancedConfig.textMap)[Math.floor(Math.random() * texts.length)];
-                } while (color === advancedConfig.textMap[text] && texts.length > 1 && Math.random() < 0.5); // 有一定概率避免颜色和字完全一致
+                } while (color === advancedConfig.textMap[text] && texts.length > 1 && Math.random() < 0.5);
                 stack.push({ text, color });
             }
             row.push(stack);
         }
         grid.push(row);
     }
-    // 渲染九宫格
-    renderAdvancedBoard(grid);
+    window._advancedGrid = grid;
+    renderAdvancedBoardV2();
 }
 
-function renderAdvancedBoard(grid) {
+function renderAdvancedBoardV2() {
     const board = document.querySelector('.advanced-board');
+    const grid = window._advancedGrid;
     board.innerHTML = '';
     board.style.display = 'grid';
     board.style.gridTemplateRows = `repeat(${advancedConfig.rows}, 1fr)`;
     board.style.gridTemplateColumns = `repeat(${advancedConfig.cols}, 1fr)`;
     board.style.gap = '16px';
-    // 记录所有牌堆
-    window._advancedGrid = grid;
-    window._advancedFlipped = {}; // 格子下标 => 当前翻开的牌
     for (let r = 0; r < advancedConfig.rows; r++) {
         for (let c = 0; c < advancedConfig.cols; c++) {
             const cell = document.createElement('div');
             cell.className = 'advanced-cell';
             cell.dataset.row = r;
             cell.dataset.col = c;
-            // 牌堆容器
             const stackDiv = document.createElement('div');
             stackDiv.className = 'advanced-stack';
-            // 翻牌按钮
-            const flipBtn = document.createElement('button');
-            flipBtn.className = 'advanced-flip-btn btn';
-            flipBtn.textContent = '翻牌';
-            flipBtn.onclick = () => {
-                flipAdvancedCard(r, c);
-            };
-            // 展示翻开的牌
-            const flippedDiv = document.createElement('div');
-            flippedDiv.className = 'advanced-flipped-card';
-            flippedDiv.style.display = 'none';
-            stackDiv.appendChild(flipBtn);
-            stackDiv.appendChild(flippedDiv);
             // 牌数
             const countDiv = document.createElement('div');
             countDiv.className = 'advanced-stack-count';
             countDiv.textContent = `剩${grid[r][c].length}张`;
             stackDiv.appendChild(countDiv);
+            // 展示栈顶
+            if (grid[r][c].length > 0) {
+                const top = grid[r][c][grid[r][c].length - 1];
+                const flippedDiv = document.createElement('div');
+                flippedDiv.className = 'advanced-flipped-card';
+                flippedDiv.textContent = top.text;
+                flippedDiv.style.color = top.color;
+                flippedDiv.style.fontSize = '2rem';
+                flippedDiv.style.justifyContent = 'center';
+                flippedDiv.style.alignItems = 'center';
+                flippedDiv.setAttribute('draggable', 'true');
+                flippedDiv.ondragstart = (e) => {
+                    e.dataTransfer.setData('text/plain', `${r},${c}`);
+                };
+                stackDiv.appendChild(flippedDiv);
+            }
             cell.appendChild(stackDiv);
             board.appendChild(cell);
         }
     }
-    // 渲染已翻开的牌
-    for (let r = 0; r < advancedConfig.rows; r++) {
-        for (let c = 0; c < advancedConfig.cols; c++) {
-            updateAdvancedCell(r, c);
-        }
-    }
 }
 
-function flipAdvancedCard(r, c) {
+function flipAdvancedCardV2(r, c) {
     const grid = window._advancedGrid;
-    if (!grid || !grid[r][c] || grid[r][c].length === 0) return;
-    // 只允许翻开一张
-    if (window._advancedFlipped[`${r},${c}`]) return;
-    const card = grid[r][c].pop();
-    window._advancedFlipped[`${r},${c}`] = card;
-    // 更新UI
-    updateAdvancedCell(r, c);
-    // 允许拖拽
-    makeAdvancedCardDraggable(r, c);
-    // 检查是否全部消除
-    checkAdvancedWin();
-}
-
-function updateAdvancedCell(r, c) {
-    const cell = document.querySelector(`.advanced-cell[data-row='${r}'][data-col='${c}']`);
-    if (!cell) return;
-    const flippedDiv = cell.querySelector('.advanced-flipped-card');
-    const countDiv = cell.querySelector('.advanced-stack-count');
-    const grid = window._advancedGrid;
-    const flipped = window._advancedFlipped[`${r},${c}`];
-    if (flipped) {
-        flippedDiv.style.display = 'flex';
-        flippedDiv.textContent = flipped.text;
-        flippedDiv.style.color = flipped.color;
-        flippedDiv.style.fontSize = '2rem';
-        flippedDiv.style.justifyContent = 'center';
-        flippedDiv.style.alignItems = 'center';
-        flippedDiv.setAttribute('draggable', 'true');
-        flippedDiv.ondragstart = (e) => {
-            e.dataTransfer.setData('text/plain', `${r},${c}`);
-        };
-    } else {
-        flippedDiv.style.display = 'none';
-        flippedDiv.textContent = '';
-        flippedDiv.removeAttribute('draggable');
-        flippedDiv.ondragstart = null;
-    }
-    countDiv.textContent = `剩${grid[r][c].length}张`;
-}
-
-function makeAdvancedCardDraggable(r, c) {
-    const cell = document.querySelector(`.advanced-cell[data-row='${r}'][data-col='${c}']`);
-    if (!cell) return;
-    const flippedDiv = cell.querySelector('.advanced-flipped-card');
-    // 允许其它格子作为放置目标
-    document.querySelectorAll('.advanced-flipped-card').forEach(target => {
-        target.ondragover = (e) => {
-            e.preventDefault();
-        };
-        target.ondrop = (e) => {
-            e.preventDefault();
-            const from = e.dataTransfer.getData('text/plain');
-            const [fromR, fromC] = from.split(',').map(Number);
-            if ((fromR === r && fromC === c) || !window._advancedFlipped[`${fromR},${fromC}`]) return;
-            // 判断是否相同
-            const cardA = window._advancedFlipped[`${fromR},${fromC}`];
-            const cardB = window._advancedFlipped[`${r},${c}`];
-            if (cardA.text === cardB.text && cardA.color === cardB.color) {
-                // 只消除这两张
-                window._advancedFlipped[`${fromR},${fromC}`] = null;
-                window._advancedFlipped[`${r},${c}`] = null;
-                updateAdvancedCell(fromR, fromC);
-                updateAdvancedCell(r, c);
-                // 检查胜利
-                checkAdvancedWin();
-            } else if (cardA.text === cardB.text && cardA.color !== cardB.color) {
-                // 字相同但颜色不同，允许叠放（from消失，to保留）
-                window._advancedFlipped[`${fromR},${fromC}`] = null;
-                updateAdvancedCell(fromR, fromC);
-                // to位置不变
-            } else {
-                // 反弹动画
-                flippedDiv.classList.add('shake');
-                setTimeout(() => flippedDiv.classList.remove('shake'), 500);
-            }
-        };
-    });
-}
-
-function checkAdvancedWin() {
-    // 所有牌堆空且无翻开牌
-    const grid = window._advancedGrid;
-    const flipped = window._advancedFlipped;
-    let allCleared = true;
-    for (let r = 0; r < advancedConfig.rows; r++) {
-        for (let c = 0; c < advancedConfig.cols; c++) {
-            if (grid[r][c].length > 0 || flipped[`${r},${c}`]) {
-                allCleared = false;
-            }
-        }
-    }
-    if (allCleared) {
-        setTimeout(() => {
-            alert('恭喜，全部消除！');
-            showScreen('mainMenu');
-        }, 300);
-    }
+    if (!grid || !grid[r][c] || grid[r][c].length !== 0) return;
+    // 新牌
+    const texts = Object.keys(advancedConfig.textMap);
+    const text = texts[Math.floor(Math.random() * texts.length)];
+    let color;
+    do {
+        color = Object.values(advancedConfig.textMap)[Math.floor(Math.random() * texts.length)];
+    } while (color === advancedConfig.textMap[text] && texts.length > 1 && Math.random() < 0.5);
+    grid[r][c].push({ text, color });
+    renderAdvancedBoardV2();
 }
 
 document.addEventListener('dragover', function(e) {
@@ -2207,21 +2113,51 @@ document.addEventListener('drop', function(e) {
         const toC = parseInt(target.parentElement.parentElement.dataset.col);
         const from = e.dataTransfer.getData('text/plain');
         const [fromR, fromC] = from.split(',').map(Number);
-        if ((fromR === toR && fromC === toC) || !window._advancedFlipped[`${fromR},${fromC}`]) return;
-        // 判断是否相同
-        const cardA = window._advancedFlipped[`${fromR},${fromC}`];
-        const cardB = window._advancedFlipped[`${toR},${toC}`];
-        if (cardA && cardB && cardA.text === cardB.text && cardA.color === cardB.color) {
-            // 消除两张
-            window._advancedFlipped[`${fromR},${fromC}`] = null;
-            window._advancedFlipped[`${toR},${toC}`] = null;
-            renderAdvancedBoard(window._advancedGrid);
-            // 检查胜利
-            checkAdvancedWin();
+        if ((fromR === toR && fromC === toC)) return;
+        const grid = window._advancedGrid;
+        if (!grid[fromR][fromC].length) return;
+        const fromCard = grid[fromR][fromC][grid[fromR][fromC].length - 1];
+        // 判断目标栈整体是否为空（即数组长度为0）
+        if (grid[toR][toC].length === 0) {
+            // 整个栈为空，可以放入任意牌
+            grid[toR][toC].push(fromCard);
+            grid[fromR][fromC].pop();
         } else {
-            // 反弹动画
-            target.classList.add('shake');
-            setTimeout(() => target.classList.remove('shake'), 500);
+            const toCard = grid[toR][toC][grid[toR][toC].length - 1];
+            if (fromCard.text === toCard.text && fromCard.color === toCard.color) {
+                // 两个都弹栈
+                grid[fromR][fromC].pop();
+                grid[toR][toC].pop();
+            } else if (fromCard.text === toCard.text && fromCard.color !== toCard.color) {
+                // 字相同颜色不同，from弹栈，to压入from
+                grid[fromR][fromC].pop();
+                grid[toR][toC].push(fromCard);
+            } else {
+                // 反弹动画
+                target.classList.add('shake');
+                setTimeout(() => target.classList.remove('shake'), 500);
+                return;
+            }
         }
+        renderAdvancedBoardV2();
+        checkAdvancedWinV2();
     }
 });
+
+function checkAdvancedWinV2() {
+    const grid = window._advancedGrid;
+    let allCleared = true;
+    for (let r = 0; r < advancedConfig.rows; r++) {
+        for (let c = 0; c < advancedConfig.cols; c++) {
+            if (grid[r][c].length > 0) {
+                allCleared = false;
+            }
+        }
+    }
+    if (allCleared) {
+        setTimeout(() => {
+            alert('恭喜，全部消除！');
+            showScreen('mainMenu');
+        }, 300);
+    }
+}
