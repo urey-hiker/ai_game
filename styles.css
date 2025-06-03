@@ -1705,3 +1705,20 @@ body {
     color: #888;
     margin-top: 2px;
 }
+.advanced-empty-slot {
+    width: 48px;
+    height: 48px;
+    border: 2px dashed #bbb;
+    border-radius: 8px;
+    background: #f7fff7;
+    margin: 0 auto 6px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+    transition: border-color 0.2s;
+}
+.advanced-empty-slot:hover, .advanced-empty-slot:active {
+    border-color: #4ecdc4;
+    opacity: 1;
+}

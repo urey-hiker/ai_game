@@ -2019,21 +2019,41 @@ function startAdvancedGame() {
     const board = document.querySelector('.advanced-board');
     if (!board) return;
     board.innerHTML = '';
-    // 生成九宫格，每格一个栈
+    // 生成成对的牌，保证有解
+    const total = advancedConfig.rows * advancedConfig.cols * advancedConfig.stackCount;
+    if (total % 2 !== 0) {
+        alert('总牌数必须为偶数才能保证有解');
+        return;
+    }
+    const texts = Object.keys(advancedConfig.textMap);
+    const colors = Object.values(advancedConfig.textMap);
+    const pairs = [];
+    // 尽量均匀分配字和颜色
+    while (pairs.length < total / 2) {
+        const text = texts[Math.floor(Math.random() * texts.length)];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        pairs.push({ text, color });
+    }
+    // 每对两张
+    let allCards = [];
+    pairs.forEach(pair => {
+        allCards.push({ ...pair });
+        allCards.push({ ...pair });
+    });
+    // 打乱
+    for (let i = allCards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allCards[i], allCards[j]] = [allCards[j], allCards[i]];
+    }
+    // 分配到九宫格
     const grid = [];
+    let idx = 0;
     for (let r = 0; r < advancedConfig.rows; r++) {
         const row = [];
         for (let c = 0; c < advancedConfig.cols; c++) {
-            // 每格一叠牌，栈底到栈顶
             const stack = [];
             for (let i = 0; i < advancedConfig.stackCount; i++) {
-                const texts = Object.keys(advancedConfig.textMap);
-                const text = texts[Math.floor(Math.random() * texts.length)];
-                let color;
-                do {
-                    color = Object.values(advancedConfig.textMap)[Math.floor(Math.random() * texts.length)];
-                } while (color === advancedConfig.textMap[text] && texts.length > 1 && Math.random() < 0.5);
-                stack.push({ text, color });
+                stack.push(allCards[idx++]);
             }
             row.push(stack);
         }
@@ -2079,6 +2099,28 @@ function renderAdvancedBoardV2() {
                     e.dataTransfer.setData('text/plain', `${r},${c}`);
                 };
                 stackDiv.appendChild(flippedDiv);
+            } else {
+                // 栈整体为空，显示可放置虚拟牌位
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'advanced-empty-slot';
+                emptyDiv.textContent = '';
+                emptyDiv.ondragover = (e) => { e.preventDefault(); };
+                emptyDiv.ondrop = (e) => {
+                    e.preventDefault();
+                    const from = e.dataTransfer.getData('text/plain');
+                    const [fromR, fromC] = from.split(',').map(Number);
+                    if ((fromR === r && fromC === c)) return;
+                    const grid = window._advancedGrid;
+                    if (!grid[fromR][fromC].length) return;
+                    const fromCard = grid[fromR][fromC][grid[fromR][fromC].length - 1];
+                    if (grid[r][c].length === 0) {
+                        grid[r][c].push(fromCard);
+                        grid[fromR][fromC].pop();
+                        renderAdvancedBoardV2();
+                        checkAdvancedWinV2();
+                    }
+                };
+                stackDiv.appendChild(emptyDiv);
             }
             cell.appendChild(stackDiv);
             board.appendChild(cell);
