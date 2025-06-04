@@ -1690,15 +1690,18 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
+    font-size: 3rem;
+    font-family: 'Uranus', sans-serif;
     font-weight: bold;
     margin-bottom: 6px;
     cursor: grab;
     user-select: none;
-    transition: box-shadow 0.2s;
+    transition: box-shadow 0.2s, transform 0.2s;
+    animation: optionAppear 0.4s cubic-bezier(.68,-0.55,.27,1.55);
 }
 .advanced-flipped-card:active {
     box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    transform: scale(0.96);
 }
 .advanced-stack-count {
     font-size: 0.95rem;

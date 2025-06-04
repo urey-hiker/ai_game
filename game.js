@@ -1561,6 +1561,14 @@ function updateResultScreen() {
     setTimeout(() => {
         resultButtons.classList.add('show');
     }, 1000);
+
+    // 分数达到400分时显示进阶玩法按钮
+    const advBtn = document.getElementById('start-advanced');
+    if (advBtn) {
+        if (gameState.score >= 1000) {
+            advBtn.style.display = '';
+        }
+    }
 }
 
 // 渲染成就列表
