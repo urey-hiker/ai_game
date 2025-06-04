@@ -38,6 +38,7 @@ window.gameState = {
     unlockedAchievements: [],
     currentCorrectOption: null, // 用于基础难度下保存当前正确选项
     debugMode: false, // 调试模式开关
+    hasUsedDebugMode: false, // 记录是否曾经使用过调试模式
     totalClicks: 0, // 总点击次数
     correctClicks: 0, // 正确点击次数
     clickTimes: [], // 记录每次正确点击的时间
@@ -152,6 +153,9 @@ function initGame() {
 
     // 显示主菜单（但菜单选项隐藏，等待点击）
     showScreen('mainMenu');
+    
+    // 设置进阶模式
+    setupAdvancedMode();
 }
 
 // 设置点击继续功能
@@ -197,6 +201,12 @@ function setupDebugMode() {
 
             // 切换调试模式
             gameState.debugMode = !gameState.debugMode;
+
+            // 如果开启了调试模式，记录使用过调试模式的标记
+            if (gameState.debugMode) {
+                gameState.hasUsedDebugMode = true;
+                // 不再保存到localStorage
+            }
 
             // 显示调试模式状态
             const message = gameState.debugMode ? '调试模式已开启！所有点击都将视为正确' : '调试模式已关闭';
@@ -267,6 +277,7 @@ function loadSavedData() {
         gameState.unlockedAchievements = data.unlockedAchievements || [];
         gameState.maxCombo = data.maxCombo || 0;
         gameState.clearedLevels = data.clearedLevels || 0;
+        // 不从localStorage读取hasUsedDebugMode，保持为false
     }
 }
 
@@ -276,6 +287,7 @@ function saveGameData() {
         unlockedAchievements: gameState.unlockedAchievements,
         maxCombo: gameState.maxCombo,
         clearedLevels: gameState.clearedLevels
+        // 不保存hasUsedDebugMode到localStorage
     };
     localStorage.setItem('colorWordGame', JSON.stringify(dataToSave));
 }
@@ -1530,7 +1542,9 @@ function updateResultScreen() {
     elements.result.finalScore.textContent = gameState.score;
     elements.result.maxCombo.textContent = gameState.maxCombo;
     elements.result.clearedLevels.textContent = gameState.clearedLevels;
-    // elements.result.unlockedContainer.innerHTML = '';
+    
+    // 清空解锁内容容器，避免重复添加
+    elements.result.unlockedContainer.innerHTML = '';
 
     // 计算并显示正确率
     const accuracy = gameState.totalClicks > 0
@@ -1551,6 +1565,14 @@ function updateResultScreen() {
         averageTime = (sum / gameState.clickTimes.length).toFixed(2);
     }
     elements.result.averageTime.textContent = averageTime;
+
+    // 如果曾经使用过调试模式，显示提示信息
+    if (gameState.hasUsedDebugMode) {
+        const debugWarning = document.createElement('div');
+        debugWarning.className = 'debug-warning';
+        debugWarning.textContent = '⚠️ 该玩家曾使用过调试模式，成绩可能不真实';
+        elements.result.unlockedContainer.appendChild(debugWarning);
+    }
 
     // 获取结果按钮容器
     const resultButtons = document.querySelector('.result-buttons');
@@ -1642,7 +1664,14 @@ function shareResult() {
     }
 
     // 创建分享文本
-    const shareText = `我在《头文字R》中获得了${gameState.score}分，最高连击${gameState.maxCombo}次，通过了${gameState.clearedLevels}关！正确率${accuracy}%，平均反应时间${averageTime}秒。来挑战我吧！`;
+    let shareText = `我在《头文字R》中获得了${gameState.score}分，最高连击${gameState.maxCombo}次，通过了${gameState.clearedLevels}关！正确率${accuracy}%，平均反应时间${averageTime}秒。`;
+    
+    // 如果使用过调试模式，添加标记
+    if (gameState.hasUsedDebugMode) {
+        shareText += "（使用过调试模式）";
+    }
+    
+    shareText += "来挑战我吧！";
 
     // 尝试使用Web Share API
     if (navigator.share) {
@@ -2412,3 +2441,4 @@ function showAdvancedSuccessModal() {
         };
     }
 }
+// 导出函数供其他模块使用
