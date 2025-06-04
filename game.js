@@ -2055,7 +2055,7 @@ function setupAdvancedMode() {
 const advancedConfig = {
     rows: 3,
     cols: 3,
-    stackCount: 2,
+    stackCount: 10,
     textMap: gameConfig.textMap
 };
 
