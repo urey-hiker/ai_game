@@ -1,7 +1,7 @@
 // 游戏配置
 const gameConfig = {
     // 颜色-文字映射
-    textMap: { '红': 'red', '黄': 'yellow', '蓝': 'blue', '绿': 'green', '紫': 'purple', '粉': 'pink' },
+    textMap: { '红': 'red', '黄': '#FFD600', '蓝': 'blue', '绿': 'green', '紫': 'purple', '粉': 'pink' },
 
 
     // 连击奖励配置
@@ -50,7 +50,8 @@ window.gameState = {
     },
     coverTimer: null, // 遮盖定时器
     coverInterval: null, // 遮盖间隔定时器
-    _adModalShown: false // 新增广告弹窗标记
+    _adModalShown: false, // 新增广告弹窗标记
+    _advancedUnlockModalShown: false // 新增进阶玩法解锁弹窗标记
 };
 
 // DOM元素引用
@@ -1565,10 +1566,43 @@ function updateResultScreen() {
     // 分数达到400分时显示进阶玩法按钮
     const advBtn = document.getElementById('start-advanced');
     if (advBtn) {
-        if (gameState.score >= 1000) {
+        if (gameState.score >= 400) {
+            // 只在第一次达到400分且按钮未显示过时弹窗
+            if (!window._advancedUnlockModalShown) {
+                showAdvancedUnlockModal();
+                window._advancedUnlockModalShown = true;
+            }
             advBtn.style.display = '';
         }
     }
+}
+
+function showAdvancedUnlockModal() {
+    // 检查是否已存在，避免重复
+    let modal = document.getElementById('advanced-unlock-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        return;
+    }
+    // 创建弹窗结构
+    modal = document.createElement('div');
+    modal.id = 'advanced-unlock-modal';
+    modal.className = 'ad-modal';
+    modal.style.display = 'flex';
+    modal.innerHTML = `
+      <div class="ad-modal-content">
+        <h3>勇士，恭喜你被国王看中！</h3>
+        <p>特邀来解决老国王留下的谜题，地位、金钱，任你挑选！</p>
+        <div class="ad-modal-buttons">
+          <button id="advanced-unlock-close-btn" class="btn btn-primary">关闭</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    // 按钮事件
+    document.getElementById('advanced-unlock-close-btn').onclick = function() {
+        modal.style.display = 'none';
+    };
 }
 
 // 渲染成就列表
@@ -2023,7 +2057,54 @@ const advancedConfig = {
     textMap: gameConfig.textMap
 };
 
+let _advancedGuideShown = false;
+
+function showAdvancedGuideModal() {
+    let modal = document.getElementById('advanced-guide-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        return;
+    }
+    modal = document.createElement('div');
+    modal.id = 'advanced-guide-modal';
+    modal.className = 'ad-modal';
+    modal.style.display = 'flex';
+    modal.innerHTML = `
+      <div class="ad-modal-content">
+        <h3>老国王的灵魂：</h3>
+        <p>拖一拖里面的牌，<br>你会发现其中的奥妙。<br>勇士，祝你好运！哈哈哈哈！</p>
+        <div class="ad-modal-buttons">
+          <button id="advanced-guide-close-btn" class="btn btn-primary">我知道了</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    document.getElementById('advanced-guide-close-btn').onclick = function() {
+        modal.style.display = 'none';
+    };
+}
+
+// 新增：记录禁用格子
+let _advancedDisabledCells = [];
+
+function getRandomCell(rows, cols, excludeCells = []) {
+    let candidates = [];
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            if (!excludeCells.some(cell => cell[0] === r && cell[1] === c)) {
+                candidates.push([r, c]);
+            }
+        }
+    }
+    if (candidates.length === 0) return null;
+    return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
 function startAdvancedGame() {
+    if (!_advancedGuideShown) {
+        showAdvancedGuideModal();
+        _advancedGuideShown = true;
+    }
     const board = document.querySelector('.advanced-board');
     if (!board) return;
     board.innerHTML = '';
@@ -2036,36 +2117,55 @@ function startAdvancedGame() {
     const texts = Object.keys(advancedConfig.textMap);
     const colors = Object.values(advancedConfig.textMap);
     const pairs = [];
-    // 尽量均匀分配字和颜色
     while (pairs.length < total / 2) {
         const text = texts[Math.floor(Math.random() * texts.length)];
         const color = colors[Math.floor(Math.random() * colors.length)];
         pairs.push({ text, color });
     }
-    // 每对两张
     let allCards = [];
     pairs.forEach(pair => {
         allCards.push({ ...pair });
         allCards.push({ ...pair });
     });
-    // 打乱
+    // 打乱所有牌
     for (let i = allCards.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [allCards[i], allCards[j]] = [allCards[j], allCards[i]];
     }
-    // 分配到九宫格
+    // 统计所有可用格子
+    const availableCells = [];
+    for (let r = 0; r < advancedConfig.rows; r++) {
+        for (let c = 0; c < advancedConfig.cols; c++) {
+            if (!_advancedDisabledCells.some(cell => cell[0] === r && cell[1] === c)) {
+                availableCells.push([r, c]);
+            }
+        }
+    }
+    // 打乱可用格子顺序
+    for (let i = availableCells.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [availableCells[i], availableCells[j]] = [availableCells[j], availableCells[i]];
+    }
+    // 初始化grid
     const grid = [];
-    let idx = 0;
     for (let r = 0; r < advancedConfig.rows; r++) {
         const row = [];
         for (let c = 0; c < advancedConfig.cols; c++) {
-            const stack = [];
-            for (let i = 0; i < advancedConfig.stackCount; i++) {
-                stack.push(allCards[idx++]);
-            }
-            row.push(stack);
+            let isDisabled = _advancedDisabledCells.some(cell => cell[0] === r && cell[1] === c);
+            row.push(isDisabled ? null : []);
         }
         grid.push(row);
+    }
+    // 尽量平均分配所有牌到可用格子
+    const base = Math.floor(allCards.length / availableCells.length);
+    const extra = allCards.length % availableCells.length;
+    let idx = 0;
+    for (let i = 0; i < availableCells.length; i++) {
+        const [r, c] = availableCells[i];
+        const count = base + (i < extra ? 1 : 0);
+        for (let j = 0; j < count; j++) {
+            grid[r][c].push(allCards[idx++]);
+        }
     }
     window._advancedGrid = grid;
     renderAdvancedBoardV2();
@@ -2085,15 +2185,21 @@ function renderAdvancedBoardV2() {
             cell.className = 'advanced-cell';
             cell.dataset.row = r;
             cell.dataset.col = c;
+            // 禁用格子
+            if (_advancedDisabledCells.some(cellPos => cellPos[0] === r && cellPos[1] === c)) {
+                cell.classList.add('advanced-cell-disabled');
+                cell.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#bbb;">X</div>';
+                board.appendChild(cell);
+                continue;
+            }
             const stackDiv = document.createElement('div');
             stackDiv.className = 'advanced-stack';
             // 牌数
             const countDiv = document.createElement('div');
             countDiv.className = 'advanced-stack-count';
-            countDiv.textContent = `剩${grid[r][c].length}张`;
+            countDiv.textContent = grid[r][c] ? `剩${grid[r][c].length}张` : '';
             stackDiv.appendChild(countDiv);
-            // 展示栈顶
-            if (grid[r][c].length > 0) {
+            if (grid[r][c] && grid[r][c].length > 0) {
                 const top = grid[r][c][grid[r][c].length - 1];
                 const flippedDiv = document.createElement('div');
                 flippedDiv.className = 'advanced-flipped-card';
@@ -2107,7 +2213,7 @@ function renderAdvancedBoardV2() {
                     e.dataTransfer.setData('text/plain', `${r},${c}`);
                 };
                 stackDiv.appendChild(flippedDiv);
-            } else {
+            } else if (grid[r][c]) {
                 // 栈整体为空，显示可放置虚拟牌位
                 const emptyDiv = document.createElement('div');
                 emptyDiv.className = 'advanced-empty-slot';
@@ -2199,6 +2305,9 @@ function checkAdvancedWinV2() {
     let allCleared = true;
     for (let r = 0; r < advancedConfig.rows; r++) {
         for (let c = 0; c < advancedConfig.cols; c++) {
+            if (_advancedDisabledCells.some(cellPos => cellPos[0] === r && cellPos[1] === c)) {
+                continue;
+            }
             if (grid[r][c].length > 0) {
                 allCleared = false;
             }
@@ -2206,8 +2315,61 @@ function checkAdvancedWinV2() {
     }
     if (allCleared) {
         setTimeout(() => {
-            alert('恭喜，全部消除！');
-            showScreen('mainMenu');
+            showAdvancedSuccessModal();
         }, 300);
+    }
+}
+
+function showAdvancedSuccessModal() {
+    // 检查是否已存在，避免重复
+    let modal = document.getElementById('advanced-success-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        return;
+    }
+    // 判断是否已禁用2个格子
+    const isFinal = _advancedDisabledCells.length >= 2;
+    // 创建弹窗结构
+    modal = document.createElement('div');
+    modal.id = 'advanced-success-modal';
+    modal.className = 'ad-modal';
+    modal.style.display = 'flex';
+    modal.innerHTML = isFinal ? `
+      <div class="ad-modal-content">
+        <h3>恭喜你，勇士！</h3>
+        <p>你已完成了国王的谜题！</p>
+        <div class="ad-modal-buttons">
+          <button id="advanced-success-back-btn" class="btn btn-primary">返回主菜单</button>
+        </div>
+      </div>
+    ` : `
+      <div class="ad-modal-content">
+        <h3>勇士！干的漂亮！</h3>
+        <div class="ad-modal-buttons">
+          <button id="advanced-success-next-btn" class="btn btn-primary">下一关</button>
+          <button id="advanced-success-back-btn" class="btn btn-primary">返回主菜单</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    document.getElementById('advanced-success-back-btn').onclick = function() {
+        modal.style.display = 'none';
+        if (!isFinal) {
+            // 禁用一个新的随机格子
+            const nextDisable = getRandomCell(advancedConfig.rows, advancedConfig.cols, _advancedDisabledCells);
+            if (nextDisable) _advancedDisabledCells.push(nextDisable);
+        } else {
+            _advancedDisabledCells = [];
+        }
+        showScreen('mainMenu');
+    };
+    if (!isFinal) {
+        document.getElementById('advanced-success-next-btn').onclick = function() {
+            modal.style.display = 'none';
+            // 禁用一个新的随机格子
+            const nextDisable = getRandomCell(advancedConfig.rows, advancedConfig.cols, _advancedDisabledCells);
+            if (nextDisable) _advancedDisabledCells.push(nextDisable);
+            startAdvancedGame();
+        };
     }
 }
