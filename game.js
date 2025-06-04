@@ -1566,7 +1566,8 @@ function updateResultScreen() {
     // 分数达到400分时显示进阶玩法按钮
     const advBtn = document.getElementById('start-advanced');
     if (advBtn) {
-        if (gameState.score >= 400) {
+        if (gameState.score === 30) {
+        // if (gameState.score >= 400) {
             // 只在第一次达到400分且按钮未显示过时弹窗
             if (!window._advancedUnlockModalShown) {
                 showAdvancedUnlockModal();
