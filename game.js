@@ -2048,13 +2048,14 @@ function setupAdvancedMode() {
     backFromAdvanced.addEventListener('click', () => {
         showScreen('mainMenu');
     });
+    startAdvancedBtn.style.display = '';
 }
 
 // 进阶玩法核心逻辑
 const advancedConfig = {
     rows: 3,
     cols: 3,
-    stackCount: 10,
+    stackCount: 2,
     textMap: gameConfig.textMap
 };
 
@@ -2324,33 +2325,70 @@ function checkAdvancedWinV2() {
 function showAdvancedSuccessModal() {
     // 检查是否已存在，避免重复
     let modal = document.getElementById('advanced-success-modal');
+    // 判断是否已禁用2个格子
+    disabledCount = _advancedDisabledCells.length;
+    isFinal = disabledCount >= 2;
     if (modal) {
         modal.style.display = 'flex';
+        modal.innerHTML = isFinal ? `
+        <div class="ad-modal-content">
+            <h3>恭喜你，勇士！</h3>
+            <p>你已完成了国王的谜题！</p>
+            <div class="ad-modal-buttons">
+            <button id="advanced-success-back-btn" class="btn btn-primary">返回主菜单</button>
+            </div>
+        </div>
+        ` : `
+        <div class="ad-modal-content">
+            <h3>勇士！干的漂亮！</h3>
+            <div class="ad-modal-buttons">
+                <button id="advanced-success-back-btn" class="btn btn-primary">返回主菜单</button>
+                <button id="advanced-success-next-btn" class="btn btn-primary">下一关</button>
+            </div>
+        </div>
+        `;
+        // 重新绑定按钮事件
+        document.getElementById('advanced-success-back-btn').onclick = function() {
+            modal.style.display = 'none';
+            if (!isFinal) {
+                const nextDisable = getRandomCell(advancedConfig.rows, advancedConfig.cols, _advancedDisabledCells);
+                if (nextDisable) _advancedDisabledCells.push(nextDisable);
+            } else {
+                _advancedDisabledCells = [];
+            }
+            showScreen('mainMenu');
+        };
+        if (!isFinal) {
+            document.getElementById('advanced-success-next-btn').onclick = function() {
+                modal.style.display = 'none';
+                const nextDisable = getRandomCell(advancedConfig.rows, advancedConfig.cols, _advancedDisabledCells);
+                if (nextDisable) _advancedDisabledCells.push(nextDisable);
+                startAdvancedGame();
+            };
+        }
         return;
     }
-    // 判断是否已禁用2个格子
-    const isFinal = _advancedDisabledCells.length >= 2;
     // 创建弹窗结构
     modal = document.createElement('div');
     modal.id = 'advanced-success-modal';
     modal.className = 'ad-modal';
     modal.style.display = 'flex';
     modal.innerHTML = isFinal ? `
-      <div class="ad-modal-content">
+    <div class="ad-modal-content">
         <h3>恭喜你，勇士！</h3>
         <p>你已完成了国王的谜题！</p>
         <div class="ad-modal-buttons">
-          <button id="advanced-success-back-btn" class="btn btn-primary">返回主菜单</button>
+        <button id="advanced-success-back-btn" class="btn btn-primary">返回主菜单</button>
         </div>
-      </div>
+    </div>
     ` : `
-      <div class="ad-modal-content">
+    <div class="ad-modal-content">
         <h3>勇士！干的漂亮！</h3>
         <div class="ad-modal-buttons">
-          <button id="advanced-success-next-btn" class="btn btn-primary">下一关</button>
-          <button id="advanced-success-back-btn" class="btn btn-primary">返回主菜单</button>
+            <button id="advanced-success-back-btn" class="btn btn-primary">返回主菜单</button>
+            <button id="advanced-success-next-btn" class="btn btn-primary">下一关</button>
         </div>
-      </div>
+    </div>
     `;
     document.body.appendChild(modal);
     document.getElementById('advanced-success-back-btn').onclick = function() {
