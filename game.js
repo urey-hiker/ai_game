@@ -375,8 +375,8 @@ function showScreen(screenName) {
     }
 
     // 处理音乐切换
-    if (screenName === 'game') {
-        // 进入游戏屏幕，播放游戏背景音乐
+    if (screenName === 'game' || screenName === 'advanced') {
+        // 进入游戏屏幕或进阶玩法，播放游戏背景音乐
         playBackgroundMusic();
     } else {
         // 任何非游戏屏幕，播放主菜单音乐
@@ -2048,7 +2048,6 @@ function setupAdvancedMode() {
     backFromAdvanced.addEventListener('click', () => {
         showScreen('mainMenu');
     });
-    startAdvancedBtn.style.display = '';
 }
 
 // 进阶玩法核心逻辑
@@ -2194,6 +2193,54 @@ function renderAdvancedBoardV2() {
                 board.appendChild(cell);
                 continue;
             }
+            // 新增：整个格子都可拖拽放置
+            cell.ondragover = (e) => {
+                e.preventDefault();
+            };
+            cell.ondrop = (e) => {
+                e.preventDefault();
+                const from = e.dataTransfer.getData('text/plain');
+                const [fromR, fromC] = from.split(',').map(Number);
+                if ((fromR === r && fromC === c)) return;
+                const grid = window._advancedGrid;
+                if (!grid[fromR][fromC].length) return;
+                const fromCard = grid[fromR][fromC][grid[fromR][fromC].length - 1];
+                if (!grid[r][c] || grid[r][c].length === 0) {
+                    // 空栈，直接放置
+                    grid[r][c].push(fromCard);
+                    grid[fromR][fromC].pop();
+                } else {
+                    const toCard = grid[r][c][grid[r][c].length - 1];
+                    if (fromCard.text === toCard.text && fromCard.color === toCard.color) {
+                        // 两个都弹栈
+                        grid[fromR][fromC].pop();
+                        grid[r][c].pop();
+                        // 播放随机yay音效
+                        // const yayIdx = Math.floor(Math.random() * 3) + 1;
+                        // const yaySound = elements.sounds[`yay${yayIdx}`];
+                        // if (yaySound) {
+                        //     yaySound.currentTime = 0;
+                        //     yaySound.play();
+                        // }
+                        elements.sounds.wrong.currentTime = 0;
+                        elements.sounds.wrong.play();
+                    } else if (fromCard.text === toCard.text && fromCard.color !== toCard.color) {
+                        // 字相同颜色不同，from弹栈，to压入from
+                        grid[fromR][fromC].pop();
+                        grid[r][c].push(fromCard);
+                    } else {
+                        // 反弹动画
+                        const topDiv = cell.querySelector('.advanced-flipped-card');
+                        if (topDiv) {
+                            topDiv.classList.add('shake');
+                            setTimeout(() => topDiv.classList.remove('shake'), 500);
+                        }
+                        return;
+                    }
+                }
+                renderAdvancedBoardV2();
+                checkAdvancedWinV2();
+            };
             const stackDiv = document.createElement('div');
             stackDiv.className = 'advanced-stack';
             // 牌数
@@ -2286,6 +2333,14 @@ document.addEventListener('drop', function(e) {
                 // 两个都弹栈
                 grid[fromR][fromC].pop();
                 grid[toR][toC].pop();
+                // 播放随机yay音效
+                const randomYay = Math.floor(Math.random() * 3) + 1; // 1-3之间的随机数
+                const yaySound = elements.sounds[`yay${randomYay}`];
+
+                if (yaySound) {
+                    yaySound.currentTime = 0;
+                    yaySound.play();
+                }
             } else if (fromCard.text === toCard.text && fromCard.color !== toCard.color) {
                 // 字相同颜色不同，from弹栈，to压入from
                 grid[fromR][fromC].pop();
@@ -2328,6 +2383,11 @@ function showAdvancedSuccessModal() {
     // 判断是否已禁用2个格子
     disabledCount = _advancedDisabledCells.length;
     isFinal = disabledCount >= 2;
+    if (isFinal) {
+        elements.sounds.yay4.play();
+    } else {
+        elements.sounds.nioce.play();
+    }
     if (modal) {
         modal.style.display = 'flex';
         modal.innerHTML = isFinal ? `
