@@ -1982,3 +1982,59 @@ function setRandomBackground() {
     const gameContainer = document.querySelector('.game-container');
     gameContainer.style.backgroundImage = `url('${selectedBackground}')`;
 }
+
+// --------------------- API Functions ---------------------
+
+window.getGameDetails = function() {
+    const options = [];
+    if (elements.game.optionsContainer && elements.game.optionsContainer.children) {
+        Array.from(elements.game.optionsContainer.children).forEach((button, index) => {
+            options.push({
+                id: index,
+                text: button.textContent,
+                color: button.style.color,
+            });
+        });
+    }
+
+    return {
+        currentScreen: gameState.currentScreen,
+        promptText: elements.game.promptContainer ? elements.game.promptContainer.innerText : '',
+        options: options,
+        score: gameState.score,
+        time: gameState.time,
+        level: gameState.level,
+        combo: gameState.combo,
+        gameMode: gameState.currentCorrectOption ? gameState.currentCorrectOption.mode : null,
+        targetColor: gameState.currentCorrectOption && gameState.currentCorrectOption.mode === 'basic' ? gameState.currentCorrectOption.color : null,
+        targetText: gameState.currentCorrectOption && gameState.currentCorrectOption.mode === 'basic' ? gameState.currentCorrectOption.text : null,
+        isGameOver: gameState.currentScreen === 'result-screen'
+    };
+};
+
+window.clickOption = function(optionIdentifier) {
+    if (elements.game.optionsContainer && elements.game.optionsContainer.children[optionIdentifier]) {
+        const buttonElement = elements.game.optionsContainer.children[optionIdentifier];
+        // It's better to call handleButtonClick if it contains all relevant logic
+        // Otherwise, buttonElement.click() would be simpler.
+        if (typeof handleButtonClick === 'function') {
+            handleButtonClick(buttonElement);
+        } else {
+            console.error('handleButtonClick function is not defined.');
+        }
+    } else {
+        console.error('Option button with identifier ' + optionIdentifier + ' not found.');
+    }
+};
+
+window.startGameExternal = function() {
+    if (typeof startGame === 'function') {
+        startGame();
+    } else {
+        console.error('startGame function is not defined.');
+    }
+};
+
+window.gameConfig = gameConfig;
+
+// --------------------- End API Functions ---------------------
