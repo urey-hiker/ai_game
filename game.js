@@ -1615,7 +1615,7 @@ function showAdvancedUnlockModal() {
     modal.innerHTML = `
       <div class="ad-modal-content">
         <h3>勇士，恭喜你被国王看中！</h3>
-        <p>特邀来解决老国王留下的谜题，地位、金钱，任你挑选！</p>
+        <p>特邀来解决老国王留下的谜题，<br>地位、金钱，任你挑选！</p>
         <div class="ad-modal-buttons">
           <button id="advanced-unlock-close-btn" class="btn btn-primary">关闭</button>
         </div>
