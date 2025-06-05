@@ -102,6 +102,12 @@ function toggleGameDebugMode() {
     // 切换调试模式
     window.gameState.debugMode = !window.gameState.debugMode;
     
+    // 如果开启了调试模式，记录使用过调试模式的标记
+    if (window.gameState.debugMode) {
+        window.gameState.hasUsedDebugMode = true;
+        // 不再调用保存函数
+    }
+    
     // 如果开启了调试模式，显示Thomas彩蛋
     if (window.gameState.debugMode && typeof window.showThomasEasterEgg === 'function') {
         window.showThomasEasterEgg();
